@@ -1,0 +1,34 @@
+#################################################################
+
+RCPP_CXXFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"`
+RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
+
+
+PKG_CXXFLAGS = $(RCPP_CXXFLAGS) 
+PKG_LIBS = $(RCPP_LDFLAGS)
+
+COMMON_PKG_CPPFLAGS = -I../inst/include/ -Wfatal-errors
+
+ifeq (@THRUST_USE_OPENMP@, yes)
+  PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP  $(SHLIB_OPENMP_CXXFLAGS)
+endif
+
+
+R_OBJS = \
+		rthconv.o \
+		rthorder.o \
+		rthpearson.o \
+		rthsort.o
+
+
+OBJECTS = $(R_OBJS)
+
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+
+clean:
+	@rm -rf *.o *.so *.dll \
+		Makevars $(USER_CONF) $(SHLIB) $(OBJECTS)
+

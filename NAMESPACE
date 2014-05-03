@@ -1,0 +1,3 @@
+useDynLib(rth)
+
+exportPattern("^[[:alpha:]]+")
