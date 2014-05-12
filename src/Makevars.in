@@ -10,15 +10,16 @@ PKG_LIBS = $(RCPP_LDFLAGS)
 COMMON_PKG_CPPFLAGS = -I../inst/include/ -Wfatal-errors
 
 ifeq (@THRUST_USE_OPENMP@, yes)
-  PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP  $(SHLIB_OPENMP_CXXFLAGS)
+PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP  $(SHLIB_OPENMP_CXXFLAGS)
 endif
 
 
 R_OBJS = \
-		rthconv.o \
-		rthorder.o \
-		rthpearson.o \
-		rthsort.o
+	rthconv.o \
+	rthorder.o \
+	rthpearson.o \
+	rthsort.o \
+	rthtable.o
 
 
 OBJECTS = $(R_OBJS)

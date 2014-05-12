@@ -6,9 +6,7 @@
 #include <thrust/device_vector.h>
 #include <thrust/detail/config.h>
 
-
-
-extern "C" {
+#include <Rcpp.h>
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<int>::iterator intveciter;
@@ -68,11 +66,18 @@ struct do1chunk {  // handle one chunk of the data
    }
 };
 
-// see parameter legend above
-void rthtable(int *m, int *nptr, int *nvptr, int *dim, int *ndimptr,
-// int *freq, int *nchptr)
-   int *nchptr, int *freq)
-{  int n = *nptr, nv = *nvptr, lm = n * nv, ndim = *ndimptr, nch = *nchptr;
+
+
+RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP nch_)
+{
+  Rcpp::IntegerVector m(m_);
+  const int n = INTEGER(n_)[0];
+  const int nv = INTEGER(nv_)[0];
+  const int lm = n * nv;
+  const int ndim = INTEGER(ndim_)[0];
+  int nch = INTEGER(nch_)[0];
+  Rcpp::NumericVector freq(ndim);
+  
    // if nch not specified, use Thrust to determine it
    if (nch == 0) {
       thrust::system::detail::internal::uniform_decomposition<int>
@@ -84,8 +89,9 @@ void rthtable(int *m, int *nptr, int *nvptr, int *dim, int *ndimptr,
 # endif
       nch =  decomp1.size();
    }
-   intvec dm(m,m+lm);
-   intvec ddim(dim,dim+nv);
+   
+   intvec dm(m.begin(),m.end());
+   intvec ddim(INTEGER(dim), INTEGER(dim)+nv);
    intvec dfreq(nch*ndim);
    int hfreq[nch*ndim];
    thrust::counting_iterator<int> seqa(0);
@@ -101,30 +107,8 @@ void rthtable(int *m, int *nptr, int *nvptr, int *dim, int *ndimptr,
          sum += hfreq[chunknum*ndim + binnum];
       freq[binnum] = sum;
    }
+   
+   return freq;
 }
 
-// #include <stdio.h>
-// int main(int argc, char **argv)
-// {
-//    int x[8] = {1,1,2,1,
-//                2,1,3,2};
-//    int dim[2] = {2,3};
-//    int n = 4, nv = 2, ndim = 6, nch = 2,i;
-//    int freq[100];
-//    rthtable(x,&n,&nv,dim,&ndim,&nch,freq);
-//    // should print 1 0 2 0 0 1
-//    for (i = 0; i < ndim; i++) printf("%d\n",freq[i]);
-//    printf("\n");
-//    printf("\n");
-//    int x2[15] = {1,1,2,2,1,
-//                  2,1,3,3,2,
-//                  2,1,1,2,2};
-//    int dim2[3] = {2,3,2};
-//    n = 5; nv = 3; ndim = 12, nch = 0;
-//    rthtable(x2,&n,&nv,dim2,&ndim,&nch,freq);
-//    // should print 1 0 0 0 0 1 0 0 2 0 0 1 
-//    for (i = 0; i < ndim; i++) printf("%d\n",freq[i]);
-// }
-
-}
 
