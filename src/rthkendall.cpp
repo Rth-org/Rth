@@ -1,4 +1,3 @@
-
 // author: N. Matloff
 
 // Rth implementation of Kendall's tau
@@ -10,6 +9,7 @@
 
 // see also the method "kendall" in cor.fk(), part of the pcaPP package
 
+#include <Rcpp.h>
 #include <thrust/device_vector.h>
 
 #ifdef GPU
@@ -43,28 +43,28 @@ struct calcgti {  // handle 1 i, all j > i
    }
 };
 
-void rthkendall(flouble *x, flouble *y, int *nptr, flouble *tauptr)
-{  int n = *nptr;
-   thrust::counting_iterator<int> seqa(0);
-   thrust::counting_iterator<int> seqb =  seqa + n - 1;
-   floublevec dx(x,x+n);
-   floublevec dy(y,y+n);
-   intvec tmp(n-1);
-   thrust::transform(seqa,seqb,tmp.begin(),calcgti(dx,dy,n));
-   int totcount = thrust::reduce(tmp.begin(),tmp.end());
-   flouble npairs = n * (n-1) / 2;
-   *tauptr = (totcount - (npairs-totcount)) / npairs;
-}
 
-// #include <stdio.h>
-// int main(int argc, char **argv)
-// {
-//    flouble x[6] = {3,5.01,12,6,5,15},
-//            y[6] = {7,8,4.01,10,4,16};
-//    int n = 6;
-//    flouble tau;
-//    rthkendall(x,y,&n,&tau);
-//    printf("%f\n",tau);  // should be 0.46667
-// }
+
+RcppExport SEXP rthkendall(SEXP x_, SEXP y_)
+{
+  Rcpp::NumericVector x(x_);
+  Rcpp::NumericVector y(y_);
+  Rcpp::NumericVector RET(1);
+  const int n = LENGTH(x);
+  
+  thrust::counting_iterator<int> seqa(0);
+  thrust::counting_iterator<int> seqb =  seqa + n - 1;
+  floublevec dx(x.begin(), x.end());
+  floublevec dy(y.begin(), y.end());
+  
+  intvec tmp(n-1);
+  thrust::transform(seqa,seqb,tmp.begin(),calcgti(dx,dy,n));
+  int totcount = thrust::reduce(tmp.begin(),tmp.end());
+  flouble npairs = n * (n-1) / 2;
+  
+  REAL(RET)[0] = (double) (totcount - (npairs-totcount)) / npairs;
+  
+  return RET;
+}
 
 

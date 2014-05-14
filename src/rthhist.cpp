@@ -8,9 +8,8 @@
 // extern "C" void rthhist(double *x, int *nptr, int *nchptr, int
 // *nbinsptr, int *bincounts, double *leftptr, double *binwidthptr);
 
+#include <Rcpp.h>
 #include <thrust/device_vector.h>
-
-extern "C" {
 
 #ifdef GPU
 #define flouble float
@@ -69,23 +68,39 @@ struct do1chunk {  // handle one chunk of the data
    }
 };
 
-void rthhist(flouble *x, int *nptr, int *nbinsptr,  int *nchptr,
-   int *bincounts, flouble *leftptr, flouble *binwidthptr)
-{  int n=*nptr,nbins=*nbinsptr,nch=*nchptr;
-   floublevec dx(x,x+n);
+
+
+RcppExport SEXP rthhist(SEXP x_, SEXP nbins_,  SEXP nch_)
+{  
+   Rcpp::NumericVector x(x_);
+   const int n = x.size();
+   const int nbins = INTEGER(nbins_)[0];
+   const int nch = INTEGER(nch_)[0];
+   floublevec dx(x.begin(), x.end());
+   
+   Rcpp::IntegerVector bincounts(nbins);
+   Rcpp::NumericVector R_left(1);
+   Rcpp::NumericVector R_binwidth(1);
+   
    // determine binwidth etc.
    thrust::pair<floubleveciter, floubleveciter> mm = 
       thrust::minmax_element(dx.begin(), dx.end());
    flouble left = *(mm.first), right = *(mm.second);
    flouble binwidth = (right - left) / nbins;
+   
    // form matrix of bin counts, one row per chunk
    intvec dbincounts(nch*nbins);
+   
+   
    // the heart of the computation, a for_each() loop, one iteration per
    // chunk
    thrust::counting_iterator<int> seqa(0);
    thrust::counting_iterator<int> seqb =  seqa + nch;
    thrust::for_each(seqa,seqb,
-      do1chunk(dx.begin(),dbincounts.begin(),n,nbins,nch,left,binwidth));
+      do1chunk(dx.begin(),dbincounts.begin(
+        
+      ),n,nbins,nch,left,binwidth));
+   
    // copy result to host and combine the subhistograms
    int hbincounts[nch*nbins];
    thrust::copy(dbincounts.begin(),dbincounts.end(),hbincounts);
@@ -96,22 +111,13 @@ void rthhist(flouble *x, int *nptr, int *nbinsptr,  int *nchptr,
          sum += hbincounts[chunknum*nbins + binnum];
       bincounts[binnum] = sum;
    }
-   *leftptr = left; *binwidthptr = binwidth;
+   
+   
+   REAL(R_left)[0] = (double) left; 
+   REAL(R_binwidth)[0] = (double) binwidth;
+   
+   return Rcpp::List::create(Rcpp::Named("counts") = bincounts,
+                             Rcpp::Named("left") = R_left,
+                             Rcpp::Named("binwidth") = R_binwidth);
 }
 
-// #include <stdio.h>
-// int main(int argc, char **argv)
-// {
-//    flouble x[12] = {3,5.01,12,6,5,15,7,8,4.01,10,4,16};
-//    int n = 12, i;
-//    int bincounts[5];
-//    int nbins = 5;
-//    int nch = 2;
-//    flouble left, binwidth;
-//    rthhist(x, &n, &nbins, &nch, bincounts, &left, &binwidth);
-//    // should print out 5 3 1 1 2
-//    for (i = 0; i < nbins; i++) printf("%d\n",bincounts[i]);
-//    printf("%f %f\n",left,binwidth);
-// }
-
-}

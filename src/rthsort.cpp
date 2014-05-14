@@ -8,7 +8,7 @@
 
 // the argument "a" will be replaced by its sorted version
 
-RcppExport SEXP rthsort(SEXP a)
+RcppExport SEXP rthsort_double(SEXP a)
 {  
    Rcpp::NumericVector xa(a);
    
@@ -19,6 +19,17 @@ RcppExport SEXP rthsort(SEXP a)
    thrust::sort(dx.begin(), dx.end());
    thrust::copy(dx.begin(), dx.end(), xa.begin());
    
-   return xa;  // copied back to original array
+   return xa;
+}
+
+RcppExport SEXP rthsort_int(SEXP a)
+{  
+   Rcpp::IntegerVector xa(a);
+   
+   thrust::device_vector<int> dx(xa.begin(), xa.end());
+   thrust::sort(dx.begin(), dx.end());
+   thrust::copy(dx.begin(), dx.end(), xa.begin());
+   
+   return xa;
 }
 

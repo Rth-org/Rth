@@ -4,3 +4,4 @@
 *.log
 *.status
 *~
+src/Makevars

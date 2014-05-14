@@ -1,29 +1,15 @@
-rthhist <- function(xname,nbins,nchunks,plot=T,gpu=F) {
-   if (gpu) {
-      dyn.load("rthhistgpu.so") 
-      asfunction <- as.single
-      vecfunction <- single
-      dupval <- T
-   } else {
-      dyn.load("rthhist.so") 
-      asfunction <- as.double
-      vecfunction <- double
-      dupval <- F
-   }
-   x <- get(xname)
-   n <- length(x)
-   tmp <- .C("rthhist",asfunction(x),
-      as.integer(n),as.integer(nbins),as.integer(nchunks),
-      counts=integer(nbins),left=vecfunction(1),binwidth=vecfunction(1),
-      DUP=dupval)
-   if (!plot)
-      return(list(counts=tmp$counts,left=tmp$left,binwidth=tmp$binwidth))
-   plt <- list()
-   class(plt) <- "histogram"
-   plt$breaks <- seq(from=tmp$left,by=tmp$binwidth,length.out=nbins+1)
-   plt$counts <- tmp$counts
-   plt$xname <- xname
-   plot(plt)
-}
+x <- c(3,5.01,12,6,5,15,7,8,4.01,10,4,16)
+rthhist("x",5,4,plot=F)  # comp hist, 5 bins, 4 threads, no plot
+#  $counts
+#  [1] 5 3 1 1 2
 
+#  $left
+#  [1] 3
+#  attr(,"Csingle")
+#  [1] TRUE
+
+#  $binwidth
+#  [1] 2.6
+#  attr(,"Csingle")
+#  [1] TRUE
 
