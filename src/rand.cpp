@@ -36,15 +36,15 @@ struct parallel_random_uniform : public thrust::unary_function<thrust::tuple<con
 {
   thrust::tuple<const unsigned int, const flouble, const flouble> t;
   parallel_random_uniform(thrust::tuple<const unsigned int, const flouble, const flouble> _t) : t(_t) {}
-  
+
   __host__ __device__
   flouble operator()(unsigned int threadIdx)
   {
     unsigned int seed = thrust_hash(threadIdx) * thrust::get<0>(t);
-    
+
     thrust::default_random_engine rng(seed);
     thrust::uniform_real_distribution<flouble> u01(thrust::get<1>(t), thrust::get<2>(t));
-    
+
     return u01(rng);
   }
 };
@@ -58,21 +58,20 @@ RcppExport SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_)
   const flouble min = (flouble) REAL(min_)[0];
   const flouble max = (flouble) REAL(max_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
-  Rcpp::NumericVector RET(n);
-  
-  
+
+
   thrust::device_vector<flouble> vec(n);
-  
+
   thrust::tuple<const unsigned int, const flouble, const flouble> t(seed, min, max);
-  
+
   thrust::transform(thrust::counting_iterator<int>(0),
     thrust::counting_iterator<int>(n),
-    vec.begin(), 
+    vec.begin(),
     parallel_random_uniform(t));
-  
+
   thrust::host_vector<flouble> x(n);
   thrust::copy(vec.begin(), vec.end(), x.begin());
-  
+
   return Rcpp::wrap(x);
 }
 
@@ -83,15 +82,15 @@ struct parallel_random_normal : public thrust::unary_function<thrust::tuple<cons
 {
   thrust::tuple<const unsigned int, const flouble, const flouble> t;
   parallel_random_normal(thrust::tuple<const unsigned int, const flouble, const flouble> _t) : t(_t) {}
-  
+
   __host__ __device__
   flouble operator()(unsigned int threadIdx)
   {
     unsigned int seed = thrust_hash(threadIdx) * thrust::get<0>(t);
-    
+
     thrust::minstd_rand rng(seed);
     thrust::random::normal_distribution<flouble> nrm(thrust::get<1>(t), thrust::get<2>(t));
-    
+
     return nrm(rng);
   }
 };
@@ -105,21 +104,20 @@ RcppExport SEXP rth_rnorm(SEXP n_, SEXP mean_, SEXP sd_, SEXP seed_)
   const flouble mean = (flouble) REAL(mean_)[0];
   const flouble sd = (flouble) REAL(sd_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
-  Rcpp::NumericVector RET(n);
-  
-  
+
+
   thrust::device_vector<flouble> vec(n);
-  
+
   thrust::tuple<const unsigned int, const flouble, const flouble> t(seed, mean, sd);
-  
+
   thrust::transform(thrust::counting_iterator<int>(0),
     thrust::counting_iterator<int>(n),
-    vec.begin(), 
+    vec.begin(),
     parallel_random_normal(t));
-  
+
   thrust::host_vector<flouble> x(n);
   thrust::copy(vec.begin(), vec.end(), x.begin());
-  
+
   return Rcpp::wrap(x);
 }
 
