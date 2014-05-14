@@ -1,3 +1,5 @@
+library(Rth)
+
 x <- c(3,5.01,12,6,5,15,7,8,4.01,10,4,16)
 rthhist("x",5,4,plot=F)  # comp hist, 5 bins, 4 threads, no plot
 #  $counts

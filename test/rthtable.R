@@ -1,4 +1,4 @@
-library(rth)
+library(Rth)
 
 ### test 1
 m <- rbind(

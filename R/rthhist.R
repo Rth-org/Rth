@@ -1,4 +1,4 @@
-rthhist <- function(xname,nbins,nchunks,plot=T) {
+rthhist <- function(xname,nbins,nchunks,plot=TRUE) {
   x <- get(xname)
   
   if (!is.double(x))

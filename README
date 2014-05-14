@@ -46,14 +46,3 @@ development package.
 For the multicore case, you will need a C++ compiler with an OpenMP library 
 (this excludes clang++ at the time of writing).  GNU g++ should be sufficient.
 
-
-
-Requirements
-====================================================================
-pbdPROF requires R version 2.14.0 or higher.  It also requires the PAPI library,
-but a distribution of PAPI v 5.3.0 is bundled with the package for those who
-do not already have a system installation available.  For configuration options,
-see the package vignette.
-
-
-

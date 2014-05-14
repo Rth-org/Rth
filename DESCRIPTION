@@ -1,6 +1,6 @@
-Package: rth
+Package: Rth
 Type: Package
-Title: rth
+Title: Rth
 Version: 0.1-0
 Description: rth
 License: GPL (>= 2)
