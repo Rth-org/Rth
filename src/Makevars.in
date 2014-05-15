@@ -3,7 +3,6 @@
 RCPP_CXXFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"`
 RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
 
-
 PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/
 PKG_LIBS = $(RCPP_LDFLAGS)
 
@@ -19,6 +18,7 @@ endif
 
 
 R_OBJS = \
+	dist.o \
 	hash96.o \
 	rthconv.o \
 	rthhist.o \
