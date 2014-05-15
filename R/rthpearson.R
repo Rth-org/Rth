@@ -6,6 +6,6 @@ rthpearson <- function(x,y) {
    if (!is.double(y))
       storage.mode(y) <- "double"
    
-   .Call("rthpearson", x, y, PACKAGE="rth")
+   .Call("rthpearson", x, y, PACKAGE="Rth")
 }
 

@@ -12,7 +12,7 @@ rthtable <- function(m,dim,nch=0)
     storage.mode(m) <- "integer"
   
   freq <- .Call("rthtable", m, n, nv, as.integer(dim), as.integer(ndim), as.integer(nch), 
-    PACKAGE="rth")
+    PACKAGE="Rth")
   
   tbl <- array(freq, dim)
   class(tbl) <- "table"

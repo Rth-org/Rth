@@ -4,7 +4,7 @@ rthconv <- function(x, y) {
   if (!is.double(y))
     storage.mode(y) <- "double"
   
-  ret <- .Call("rthconv", x, y, PACKAGE="rth")
+  ret <- .Call("rthconv", x, y, PACKAGE="Rth")
   
   return(ret)
 }

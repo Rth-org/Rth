@@ -7,7 +7,7 @@ rthsort <- function(x)
     if (!is.double(x))
       storage.mode(x) <- "double"
       
-      .Call("rthsort_double", x, PACKAGE="rth")
+      .Call("rthsort_double", x, PACKAGE="Rth")
   }
 }
 

@@ -5,7 +5,7 @@ rthhist <- function(xname,nbins,nchunks,plot=TRUE) {
     storage.mode <- "double"
   
   tmp <- .Call("rthhist", x, as.integer(nbins), as.integer(nchunks),
-    PACKAGE="rth")
+    PACKAGE="Rth")
   
   if (!plot)
     return(list(counts=tmp$counts, left=tmp$left, binwidth=tmp$binwidth))
