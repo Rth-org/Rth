@@ -20,7 +20,6 @@ endif
 R_OBJS = \
 	dist.o \
 	hash96.o \
-	rthconv.o \
 	rthhist.o \
 	rthkendall.o \
 	rthorder.o \
