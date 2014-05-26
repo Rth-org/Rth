@@ -2,21 +2,12 @@
 
 AC_INIT(DESCRIPTION)
 
+
+
+### Setup custom CUDA paths
 CUDA_INSTALL_PATH="/usr/local/cuda"
 CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
 
-AC_MSG_CHECKING([whether to use GPU])
-AC_ARG_ENABLE(gpu,
-  AC_HELP_STRING([--enable-gpu], [Build with nvcc for gpu; default is no, in which case OpenMP is used.]),
-  [USE_GPU="yes"], [USE_GPU="no"])
-
-if test "$USE_GPU" == "no"; then
-  AC_MSG_RESULT([Using OpenMP])
-else
-  AC_MSG_RESULT([Using CUDA])
-fi
-
-# Setup custom CUDA paths
 AC_ARG_WITH([cuda],
  [AS_HELP_STRING(
     [--with-cuda=PATH],
@@ -30,8 +21,26 @@ AC_ARG_WITH([cuda-sdk],
  [CUDA_SDK_INSTALL_PATH=$withval],
  [with_cuda_sdk=auto])
 
-# Setup nvcc flags
-if test  "$USE_GPU" = "yes"; then
+
+### Set backend flags
+AC_MSG_CHECKING([thrust backend])
+AC_ARG_WITH(backend,
+  AC_HELP_STRING([--with-backend], [Determines the parallel backend for thrust. Options are OPENMP, TBB, and CUDA.]),
+  [BACKEND=$withval], [BACKEND="OPENMP"])
+
+
+if test "X${BACKEND}" = "XOPENMP"; then
+  AC_MSG_RESULT([Using OpenMP])
+  NVCC=""
+  NVCCFLAGS=""
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP $(SHLIB_OPENMP_CXXFLAGS)"
+elif test "X${BACKEND}" = "XTBB"; then
+  AC_MSG_RESULT([Using Thread Building Blocks])
+  NVCC=""
+  NVCCFLAGS=""
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -ltbb"
+elif test "X${BACKEND}" = "XCUDA"; then
+  AC_MSG_RESULT([Using CUDA])
   NVCCFLAGS="$NVCCFLAGS"
   CUDA_CFLAGS="$CUDA_CFLAGS"
   CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
@@ -45,13 +54,26 @@ if test  "$USE_GPU" = "yes"; then
   AC_DEFINE([_CUDA],[1],[Defined if CUDA should be used])
   eval "ARRAY${N}='-D_CUDA'"
   N=`expr $N + 1`
+else
+  AC_MSG_ERROR([Unknown backend; use one of OPENMP, TBB, or CUDA.])
 fi
 
 
 
+
 dnl Start to substitute templates
-AC_SUBST(USE_GPU)
+AC_SUBST(BACKEND)
 AC_SUBST(NVCC)
 AC_SUBST(NVCCFLAGS)
+AC_SUBST(RTH_CPPFLAGS)
 AC_OUTPUT(src/Makevars)
+
+
+
+
+
+
+
+
+
 

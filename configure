@@ -584,7 +584,8 @@ PACKAGE_URL=
 ac_unique_file="DESCRIPTION"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-USE_GPU
+RTH_CPPFLAGS
+BACKEND
 NVCCFLAGS
 NVCC
 target_alias
@@ -628,9 +629,9 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-enable_gpu
 with_cuda
 with_cuda_sdk
+with_backend
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1238,18 +1239,13 @@ if test -n "$ac_init_help"; then
 
   cat <<\_ACEOF
 
-Optional Features:
-  --disable-option-checking  ignore unrecognized --enable/--with options
-  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
-  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --enable-gpu            Build with nvcc for gpu; default is no, in which
-                          case OpenMP is used.
-
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-cuda=PATH        prefix where CUDA is installed [default=auto]
   --with-cuda-sdk=PATH    prefix where CUDA SDK is installed [default=auto]
+  --with-backend          Determines the parallel backend for thrust. Options
+                          are OPENMP, TBB, and CUDA.
 
 Report bugs to the package provider.
 _ACEOF
@@ -1680,28 +1676,12 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+
+
+### Setup custom CUDA paths
 CUDA_INSTALL_PATH="/usr/local/cuda"
 CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use GPU" >&5
-$as_echo_n "checking whether to use GPU... " >&6; }
-# Check whether --enable-gpu was given.
-if test "${enable_gpu+set}" = set; then :
-  enableval=$enable_gpu; USE_GPU="yes"
-else
-  USE_GPU="no"
-fi
-
-
-if test "$USE_GPU" == "no"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using OpenMP" >&5
-$as_echo "Using OpenMP" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using CUDA" >&5
-$as_echo "Using CUDA" >&6; }
-fi
-
-# Setup custom CUDA paths
 
 # Check whether --with-cuda was given.
 if test "${with_cuda+set}" = set; then :
@@ -1719,8 +1699,35 @@ else
 fi
 
 
-# Setup nvcc flags
-if test  "$USE_GPU" = "yes"; then
+
+### Set backend flags
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking thrust backend" >&5
+$as_echo_n "checking thrust backend... " >&6; }
+
+# Check whether --with-backend was given.
+if test "${with_backend+set}" = set; then :
+  withval=$with_backend; BACKEND=$withval
+else
+  BACKEND="OPENMP"
+fi
+
+
+
+if test "X${BACKEND}" = "XOPENMP"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using OpenMP" >&5
+$as_echo "Using OpenMP" >&6; }
+  NVCC=""
+  NVCCFLAGS=""
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP $(SHLIB_OPENMP_CXXFLAGS)"
+elif test "X${BACKEND}" = "XTBB"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using Thread Building Blocks" >&5
+$as_echo "Using Thread Building Blocks" >&6; }
+  NVCC=""
+  NVCCFLAGS=""
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -ltbb"
+elif test "X${BACKEND}" = "XCUDA"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using CUDA" >&5
+$as_echo "Using CUDA" >&6; }
   NVCCFLAGS="$NVCCFLAGS"
   CUDA_CFLAGS="$CUDA_CFLAGS"
   CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
@@ -1736,7 +1743,11 @@ $as_echo "#define _CUDA 1" >>confdefs.h
 
   eval "ARRAY${N}='-D_CUDA'"
   N=`expr $N + 1`
+else
+  as_fn_error $? "Unknown backend; use one of OPENMP, TBB, or CUDA." "$LINENO" 5
 fi
+
+
 
 
 
@@ -2899,5 +2910,14 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
+
+
+
+
+
+
+
+
+
 
 
