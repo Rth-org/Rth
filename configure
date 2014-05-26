@@ -1718,7 +1718,7 @@ if test "X${BACKEND}" = "XOPENMP"; then
 $as_echo "Using OpenMP" >&6; }
   NVCC=""
   NVCCFLAGS=""
-  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP $(SHLIB_OPENMP_CXXFLAGS)"
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \$(SHLIB_OPENMP_CXXFLAGS)"
 elif test "X${BACKEND}" = "XTBB"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using Thread Building Blocks" >&5
 $as_echo "Using Thread Building Blocks" >&6; }
@@ -2910,14 +2910,6 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unrecognized options: $ac_unrecognized_opts" >&5
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
-
-
-
-
-
-
-
-
 
 
 

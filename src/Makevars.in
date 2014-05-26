@@ -3,12 +3,13 @@
 RCPP_CXXFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"`
 RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
 
-PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/
+PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/ 
 PKG_LIBS = $(RCPP_LDFLAGS)
 
 COMMON_PKG_CPPFLAGS = -Wfatal-errors
 
-PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) @RTH_CPPFLAGS@
+RTH_CPPFLAGS = @RTH_CPPFLAGS@
+PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) $(RTH_CPPFLAGS)
 
 
 #$(CC)=@NVCC@
