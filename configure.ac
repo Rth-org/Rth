@@ -1,7 +1,8 @@
 ## autoconf configure.ac && autoreconf -if
 
 AC_INIT(DESCRIPTION)
-
+AC_PROG_CXX
+AC_LANG([C++])
 
 
 ### Setup custom CUDA paths
@@ -9,38 +10,72 @@ CUDA_INSTALL_PATH="/usr/local/cuda"
 CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
 
 AC_ARG_WITH([cuda],
- [AS_HELP_STRING(
+  [AS_HELP_STRING(
     [--with-cuda=PATH],
     [prefix where CUDA is installed @<:@default=auto@:>@])],
- [CUDA_INSTALL_PATH=$withval],
- [with_cuda=auto])
+  [CUDA_INSTALL_PATH=$withval],
+  [with_cuda=auto])
 AC_ARG_WITH([cuda-sdk],
- [AS_HELP_STRING(
+  [AS_HELP_STRING(
     [--with-cuda-sdk=PATH],
     [prefix where CUDA SDK is installed @<:@default=auto@:>@])],
- [CUDA_SDK_INSTALL_PATH=$withval],
- [with_cuda_sdk=auto])
+  [CUDA_SDK_INSTALL_PATH=$withval],
+  [with_cuda_sdk=auto])
+
+
+
+### TBB paths
+AC_ARG_WITH([tbb-incdir],
+  AC_HELP_STRING(
+    [--with-tbb-incdir@<:@=DIR@:>@], 
+    [Set TBB include directory @<:@]m4_default([$1], /usr/include)[@:>@]
+  ),
+  [tbb_incdir=$withval], 
+  [tbb_incdir=/usr/include/tbb]
+)
+
+AC_ARG_WITH([tbb-libdir],
+  AC_HELP_STRING(
+    [--with-tbb-libdir@<:@=DIR@:>@], 
+    [Set TBB library directory @<:@]m4_default([$1], /usr/lib/tbb)[@:>@]
+  ),
+  [tbb_libdir=$withval], 
+  [tbb_libdir=/usr/lib/tbb]
+)
+
 
 
 ### Set backend flags
 AC_MSG_CHECKING([thrust backend])
 AC_ARG_WITH(backend,
-  AC_HELP_STRING([--with-backend], [Determines the parallel backend for thrust. Options are OPENMP, TBB, and CUDA.]),
-  [BACKEND=$withval], [BACKEND="OPENMP"])
+  AC_HELP_STRING(
+    [--with-backend], 
+    [Determines the parallel backend for thrust. Options are OPENMP, TBB, and CUDA.]
+  ),
+  [BACKEND=$withval], 
+  [BACKEND="OPENMP"]
+)
 
 
 if test "X${BACKEND}" = "XOPENMP"; then
-  AC_MSG_RESULT([Using OpenMP])
+  AC_MSG_RESULT([Using OpenMP backend])
+  AC_OPENMP
   NVCC=""
   NVCCFLAGS=""
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \$(SHLIB_OPENMP_CXXFLAGS)"
+  RTH_LDFLAGS=""
 elif test "X${BACKEND}" = "XTBB"; then
-  AC_MSG_RESULT([Using Thread Building Blocks])
+  AC_MSG_RESULT([Using Thread Building Blocks backend])
+  
+  AC_CHECK_HEADERS([${tbb_incdir}/tbb.h],,AC_MSG_ERROR([tbb.h not found]))
+  AC_CHECK_LIB([tbb], [TBB_runtime_interface_version], [LIBS="-L${tbb_libdir} -ltbb"], [AC_MSG_ERROR(["Unable to link with Intel TBB])])
+  
   NVCC=""
   NVCCFLAGS=""
-  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -ltbb"
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -I${tbb_incdir}"
+  RTH_LDFLAGS="-L${tbb_libdir} -ltbb"
 elif test "X${BACKEND}" = "XCUDA"; then
-  AC_MSG_RESULT([Using CUDA])
+  AC_MSG_RESULT([Using CUDA backend])
   NVCCFLAGS="$NVCCFLAGS"
   CUDA_CFLAGS="$CUDA_CFLAGS"
   CUDA_CFLAGS="$CUDA_CFLAGS -I$CUDA_SDK_INSTALL_PATH/C/common/inc/"
@@ -54,6 +89,8 @@ elif test "X${BACKEND}" = "XCUDA"; then
   AC_DEFINE([_CUDA],[1],[Defined if CUDA should be used])
   eval "ARRAY${N}='-D_CUDA'"
   N=`expr $N + 1`
+  
+  RTH_LDFLAGS=""
 else
   AC_MSG_ERROR([Unknown backend; use one of OPENMP, TBB, or CUDA.])
 fi
@@ -66,6 +103,7 @@ AC_SUBST(BACKEND)
 AC_SUBST(NVCC)
 AC_SUBST(NVCCFLAGS)
 AC_SUBST(RTH_CPPFLAGS)
+AC_SUBST(RTH_LDFLAGS)
 AC_OUTPUT(src/Makevars)
 
 

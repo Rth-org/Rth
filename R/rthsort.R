@@ -1,7 +1,7 @@
 rthsort <- function(x)
 {
   if (is.integer(x))
-    .Call("rthsort_int", x, PACKAGE="rth")
+    .Call("rthsort_int", x, PACKAGE="Rth")
   else
   {
     if (!is.double(x))

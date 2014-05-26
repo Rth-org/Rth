@@ -8,6 +8,7 @@
 
 #include <Rcpp.h>
 
+
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<int>::iterator intveciter;
 
@@ -78,37 +79,41 @@ RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP 
   int nch = INTEGER(nch_)[0];
   Rcpp::NumericVector freq(ndim);
   
-   // if nch not specified, use Thrust to determine it
-   if (nch == 0) {
-      thrust::system::detail::internal::uniform_decomposition<int>
-         decomp1 =
-# if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
-      thrust::system::omp::detail::default_decomposition(n);
-# else
-      thrust::system::cuda::detail::default_decomposition(n);
-# endif
-      nch =  decomp1.size();
-   }
-   
-   intvec dm(m.begin(),m.end());
-   intvec ddim(INTEGER(dim), INTEGER(dim)+nv);
-   intvec dfreq(nch*ndim);
-   int hfreq[nch*ndim];
-   thrust::counting_iterator<int> seqa(0);
-   thrust::counting_iterator<int> seqb =  seqa + nch;
-   thrust::for_each(seqa,seqb,
-      do1chunk(dm.begin(),dfreq.begin(),n,nv,nch,ddim.begin(),ndim));
-   thrust::copy(dfreq.begin(),dfreq.end(),hfreq);
-   int binnum,chunknum;
-   // sum up the bin frequencies across chunks
-   for (binnum = 0; binnum < ndim; binnum++) {
-      int sum = 0;
-      for (chunknum = 0; chunknum < nch; chunknum++) 
-         sum += hfreq[chunknum*ndim + binnum];
-      freq[binnum] = sum;
-   }
-   
-   return freq;
+  // if nch not specified, use Thrust to determine it
+  if (nch == 0) {
+    #ifdef THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
+    Rcpp::stop("you must specify nch>0 for TBB backend");
+    #else
+    thrust::system::detail::internal::uniform_decomposition<int>
+      decomp1 =
+      # if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
+        thrust::system::omp::detail::default_decomposition(n);
+      # else
+        thrust::system::cuda::detail::default_decomposition(n);
+      # endif
+    nch =  decomp1.size();
+    #endif
+  }
+  
+  intvec dm(m.begin(),m.end());
+  intvec ddim(INTEGER(dim), INTEGER(dim)+nv);
+  intvec dfreq(nch*ndim);
+  int hfreq[nch*ndim];
+  thrust::counting_iterator<int> seqa(0);
+  thrust::counting_iterator<int> seqb =  seqa + nch;
+  thrust::for_each(seqa,seqb,
+    do1chunk(dm.begin(),dfreq.begin(),n,nv,nch,ddim.begin(),ndim));
+  thrust::copy(dfreq.begin(),dfreq.end(),hfreq);
+  int binnum,chunknum;
+  // sum up the bin frequencies across chunks
+  for (binnum = 0; binnum < ndim; binnum++) {
+    int sum = 0;
+    for (chunknum = 0; chunknum < nch; chunknum++) 
+      sum += hfreq[chunknum*ndim + binnum];
+    freq[binnum] = sum;
+  }
+  
+  return freq;
 }
 
 
