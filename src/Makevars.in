@@ -18,7 +18,6 @@ PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) @RTH_CPPFLAGS@
 R_OBJS = \
 	dist.o \
 	hash96.o \
-	rthconv.o \
 	rthhist.o \
 	rthkendall.o \
 	rthorder.o \
