@@ -81,7 +81,7 @@ RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP 
   
   // if nch not specified, use Thrust to determine it
   if (nch == 0) {
-    #ifdef THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
+    #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
     Rcpp::stop("you must specify nch>0 for TBB backend");
     #else
     thrust::system::detail::internal::uniform_decomposition<int>

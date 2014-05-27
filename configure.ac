@@ -68,7 +68,11 @@ elif test "X${BACKEND}" = "XTBB"; then
   AC_MSG_RESULT([Using Thread Building Blocks backend])
   
   AC_CHECK_HEADERS([${tbb_incdir}/tbb.h],,AC_MSG_ERROR([tbb.h not found]))
-  AC_CHECK_LIB([tbb], [TBB_runtime_interface_version], [LIBS="-L${tbb_libdir} -ltbb"], [AC_MSG_ERROR(["Unable to link with Intel TBB])])
+  
+  TMP_LDFLAGS=${LDFLAGS}
+  LDFLAGS="${LDFLAGS} -L${tbb_libdir}"
+  AC_CHECK_LIB([tbb], [TBB_runtime_interface_version], [], [AC_MSG_ERROR(["Unable to link with Intel TBB])])
+  LDFLAGS=${TMP_LDFLAGS}
   
   NVCC=""
   NVCCFLAGS=""

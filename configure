@@ -3097,6 +3097,9 @@ fi
 
 done
 
+
+  TMP_LDFLAGS=${LDFLAGS}
+  LDFLAGS="${LDFLAGS} -L${tbb_libdir}"
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TBB_runtime_interface_version in -ltbb" >&5
 $as_echo_n "checking for TBB_runtime_interface_version in -ltbb... " >&6; }
 if ${ac_cv_lib_tbb_TBB_runtime_interface_version+:} false; then :
@@ -3134,15 +3137,21 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_tbb_TBB_runtime_interface_version" >&5
 $as_echo "$ac_cv_lib_tbb_TBB_runtime_interface_version" >&6; }
 if test "x$ac_cv_lib_tbb_TBB_runtime_interface_version" = xyes; then :
-  LIBS="-L${tbb_libdir} -ltbb"
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBTBB 1
+_ACEOF
+
+  LIBS="-ltbb $LIBS"
+
 else
   as_fn_error $? "\"Unable to link with Intel TBB" "$LINENO" 5
 fi
 
+  LDFLAGS=${TMP_LDFLAGS}
 
   NVCC=""
   NVCCFLAGS=""
-  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -ltbb"
+  RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -I${tbb_incdir}"
   RTH_LDFLAGS="-L${tbb_libdir} -ltbb"
 elif test "X${BACKEND}" = "XCUDA"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using CUDA backend" >&5
