@@ -2580,7 +2580,7 @@ fi
 if test "${with_tbb_incdir+set}" = set; then :
   withval=$with_tbb_incdir; tbb_incdir=$withval
 else
-  tbb_incdir=/usr/include/tbb
+  tbb_incdir=/usr/include/
 
 fi
 
@@ -2590,7 +2590,7 @@ fi
 if test "${with_tbb_libdir+set}" = set; then :
   withval=$with_tbb_libdir; tbb_libdir=$withval
 else
-  tbb_libdir=/usr/lib/tbb
+  tbb_libdir=/usr/lib/
 
 fi
 
@@ -3082,7 +3082,7 @@ fi
 done
 
 
-for ac_header in ${tbb_incdir}/tbb.h
+for ac_header in ${tbb_incdir}/tbb/tbb.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -3099,7 +3099,7 @@ done
 
 
   TMP_LDFLAGS=${LDFLAGS}
-  LDFLAGS="${LDFLAGS} -L${tbb_libdir}"
+  LDFLAGS="${LDFLAGS} -L${tbb_libdir}/tbb"
   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for TBB_runtime_interface_version in -ltbb" >&5
 $as_echo_n "checking for TBB_runtime_interface_version in -ltbb... " >&6; }
 if ${ac_cv_lib_tbb_TBB_runtime_interface_version+:} false; then :
@@ -3152,7 +3152,7 @@ fi
   NVCC=""
   NVCCFLAGS=""
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -I${tbb_incdir}"
-  RTH_LDFLAGS="-L${tbb_libdir} -ltbb"
+  RTH_LDFLAGS="-L${tbb_libdir}/tbb -ltbb"
 elif test "X${BACKEND}" = "XCUDA"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using CUDA backend" >&5
 $as_echo "Using CUDA backend" >&6; }

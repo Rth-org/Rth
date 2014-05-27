@@ -31,7 +31,7 @@ AC_ARG_WITH([tbb-incdir],
     [Set TBB include directory @<:@]m4_default([$1], /usr/include)[@:>@]
   ),
   [tbb_incdir=$withval], 
-  [tbb_incdir=/usr/include/tbb]
+  [tbb_incdir=/usr/include/]
 )
 
 AC_ARG_WITH([tbb-libdir],
@@ -40,7 +40,7 @@ AC_ARG_WITH([tbb-libdir],
     [Set TBB library directory @<:@]m4_default([$1], /usr/lib/tbb)[@:>@]
   ),
   [tbb_libdir=$withval], 
-  [tbb_libdir=/usr/lib/tbb]
+  [tbb_libdir=/usr/lib/]
 )
 
 
@@ -67,17 +67,17 @@ if test "X${BACKEND}" = "XOPENMP"; then
 elif test "X${BACKEND}" = "XTBB"; then
   AC_MSG_RESULT([Using Thread Building Blocks backend])
   
-  AC_CHECK_HEADERS([${tbb_incdir}/tbb.h],,AC_MSG_ERROR([tbb.h not found]))
+  AC_CHECK_HEADERS([${tbb_incdir}/tbb/tbb.h],,AC_MSG_ERROR([tbb.h not found]))
   
   TMP_LDFLAGS=${LDFLAGS}
-  LDFLAGS="${LDFLAGS} -L${tbb_libdir}"
+  LDFLAGS="${LDFLAGS} -L${tbb_libdir}/tbb"
   AC_CHECK_LIB([tbb], [TBB_runtime_interface_version], [], [AC_MSG_ERROR(["Unable to link with Intel TBB])])
   LDFLAGS=${TMP_LDFLAGS}
   
   NVCC=""
   NVCCFLAGS=""
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -I${tbb_incdir}"
-  RTH_LDFLAGS="-L${tbb_libdir} -ltbb"
+  RTH_LDFLAGS="-L${tbb_libdir}/tbb -ltbb"
 elif test "X${BACKEND}" = "XCUDA"; then
   AC_MSG_RESULT([Using CUDA backend])
   NVCCFLAGS="$NVCCFLAGS"
