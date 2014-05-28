@@ -24,7 +24,9 @@ R_OBJS = \
 	rthpearson.o \
 	rand.o \
 	rthsort.o \
-	rthtable.o
+	rthcolsums.o \
+	rthtable.o \
+	rthpdist.o
 
 
 OBJECTS = $(R_OBJS)
