@@ -15,41 +15,6 @@
 typedef thrust::device_vector<flouble>::iterator floubleveciter;
 
 
-/* mean */
-struct div_by_n
-{
-  const int n;
-  
-  div_by_n(int _n) : n(_n) {}
-  
-  __host__ __device__
-  flouble operator()(flouble x) const
-  {
-    return x/((flouble) n);
-  }
-};
-
-
-
-// FIXME very slow
-RcppExport SEXP rthmean(SEXP x_)
-{
-  Rcpp::NumericVector x(x_);
-  Rcpp::NumericVector avg(1);
-  const int n = LENGTH(x);
-  
-  thrust::device_vector<flouble> dx(x.begin(), x.end());
-  
-  thrust::plus<flouble> binop;
-  flouble init = 0.;
-  avg[0] = (double) thrust::transform_reduce(dx.begin(), dx.end(), div_by_n(n), init, binop);
-  
-  return avg;
-}
-
-
-
-
 /* gini coefficient */
 struct compute_gini
 {

@@ -1,16 +1,3 @@
-### slow, don't use
-rthmean <- function(x)
-{
-  if (!is.double(x))
-    storage.mode(x) <- "double"
-  
-  ret <- .Call("rthmean", x)
-  
-  return( ret )
-}
-
-
-
 rthgini <- function(x, unbiased=TRUE, na.rm=FALSE)
 {
   if (na.rm)
@@ -24,7 +11,7 @@ rthgini <- function(x, unbiased=TRUE, na.rm=FALSE)
   
   mu <- mean(x)
   
-  ret <- .Call("rthgini", x, mu, as.integer(unbiased))
+  ret <- .Call("rthgini", x, mu, as.integer(unbiased), PACKAGE="Rth")
   
   return( ret )
 }

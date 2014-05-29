@@ -5,8 +5,6 @@
 
 #include <Rcpp.h>
 
-#define OMP_MIN 3000
-
 #ifdef GPU
 #define flouble float
 #else
@@ -82,7 +80,6 @@ double calc_dist(double *x, const double *y, const unsigned int len, const doubl
   
   diff = (double *) malloc(len * sizeof(diff));
   
-  #pragma omp parallel for default(shared) private(i) schedule(static, OMP_MIN)
   for (i=0; i<len; i++)
     diff[i] = x[i] - y[i];
   

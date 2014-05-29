@@ -15,19 +15,21 @@ PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) @RTH_CPPFLAGS@
 
 
 R_OBJS = \
-	dist.o \
-	gini.o \
-	hash96.o \
+	hash.o \
+	rthcolsums.o \
+	rthdist.o \
+	rthgini.o \
 	rthhist.o \
 	rthkendall.o \
+	rthmean.o \
+	rthnorm.o \
 	rthorder.o \
-	rthpearson.o \
-	rand.o \
-	rthsort.o \
-	rthcolsums.o \
-	rthtable.o \
 	rthpdist.o \
-	rthdist.o
+	rthpearson.o \
+	rthrnorm.o \
+	rthrunif.o \
+	rthsort.o \
+	rthtable.o
 
 
 OBJECTS = $(R_OBJS)
