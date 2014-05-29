@@ -26,7 +26,8 @@ R_OBJS = \
 	rthsort.o \
 	rthcolsums.o \
 	rthtable.o \
-	rthpdist.o
+	rthpdist.o \
+	rthdist.o
 
 
 OBJECTS = $(R_OBJS)
