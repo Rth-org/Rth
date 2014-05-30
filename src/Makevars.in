@@ -29,7 +29,8 @@ R_OBJS = \
 	rthrnorm.o \
 	rthrunif.o \
 	rthsort.o \
-	rthtable.o
+	rthtable.o \
+	threads.o
 
 
 OBJECTS = $(R_OBJS)
