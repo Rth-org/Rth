@@ -4,17 +4,14 @@
 
 #include <thrust/host_vector.h>
 #include <thrust/device_vector.h>
-#include <thrust/generate.h>
 #include <thrust/reduce.h>
 #include <thrust/functional.h>
-#include <thrust/random.h>
-#include <iostream>
 
 #include <Rcpp.h>
 
-// convert col-major linear index to col index, for any 2-D array
-// having nr rows; nr is stored in the functor
-//
+// note that R uses column-major order, and Rcpp vectors retain this
+// ordering
+
 // convert a linear index to a column index
 struct lintocol: public thrust::unary_function<int,int>
 {
@@ -31,38 +28,40 @@ struct lintocol: public thrust::unary_function<int,int>
 };
 
 // matrix m with nr rows 
-RcppExport SEXP rthcolsums(SEXP m, SEXP nrow, SEXP ncol) {
-   int nr = Rcpp::as<int>(nrow);
-   int nc = Rcpp::as<int>(ncol);
+RcppExport SEXP rthcolsums(SEXP m) {
+   Rcpp::NumericMatrix tmpm = Rcpp::NumericMatrix(m);
+   int nr = tmpm.nrow();
+   int nc = tmpm.ncol();
    Rcpp::NumericVector xm = Rcpp::NumericVector(m);
+   // colsums will be device vector for the column sums
    thrust::device_vector<double> colsums(nr);
+   //
+   // reduce_by_key(), in the form here, takes input keys, in this 
+   // case column numbers, and then does reductions based on their
+   // unique values; data that have the same input keys will be 
+   // reduced as a group (it's assumed that the data ordering is such 
+   // that all data with the same input keys are contiguous)
+   //
+   // colindices will be the "output keys"
    thrust::device_vector<int> colindices(nr);
-   thrust::make_transform_iterator(thrust::counting_iterator<int>(0), 
-      lintocol(nr)),
-   // compute column sums by summing values with equal column indices
    thrust::reduce_by_key
       (
-      // first argument to reduce_by_key() will be the beginning of the 
-      // key vector; we start with the counting iterator, 0,1,2,..., and
-      // apply our index-conversion functor to it
+      // start of input key vector; we take the counting iterator, 
+      // 0,1,2,..., and apply our index-conversion functor to it
       thrust::make_transform_iterator(thrust::counting_iterator<int>(0), 
         lintocol(nr)),
-      // second argument to reduce_by_key() will be the end of the
-      // key vector, which is nr*nc elements past the beginning
+      // end of the input key vector, 
       thrust::make_transform_iterator(thrust::counting_iterator<int>(0), 
          lintocol(nr)) + (nr*nc),
-      xm.begin(),  // input matrix
-      // this form of reduce_by_key has 2 outputs; the first is unique
-      // key values (assumes keys are in sorted order), and the second is
-      // the main output
+      xm.begin(),  // data, in this case our input matrix
+      // output keys, not used in this case, but deals with "empty rows"
+      // in "ragged matrix" settings
       colindices.begin(),  
-      colsums.begin(),
-      // test consecutive keys being equal
-      thrust::equal_to<int>(),
-      // reduction uses summing
-      thrust::plus<double>());
-   Rcpp::NumericVector sums(nc);
-   thrust::copy(colsums.begin(), colsums.end(),sums.begin());
-   return sums;
+      // at long last, our column sums
+      colsums.begin());
+   // prepare to convert to R form
+   Rcpp::NumericVector rrowsums(nc);
+   thrust::copy(colsums.begin(), colsums.end(),rrowsums.begin());
+   return rrowsums;
 }
 
