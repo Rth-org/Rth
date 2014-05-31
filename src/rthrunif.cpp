@@ -8,6 +8,8 @@
 #include <thrust/random/linear_congruential_engine.h>
 #include <thrust/random/normal_distribution.h>
 
+#include <stdint.h>
+
 #include <Rcpp.h>
 
 extern "C" {
@@ -44,7 +46,7 @@ struct parallel_random_uniform : public thrust::unary_function<thrust::tuple<con
 RcppExport SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_)
 {
   int i;
-  const int n = INTEGER(n_)[0];
+  const uint64_t n = (uint64_t) REAL(n_)[0];
   const flouble min = (flouble) REAL(min_)[0];
   const flouble max = (flouble) REAL(max_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
