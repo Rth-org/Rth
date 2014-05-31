@@ -1,6 +1,6 @@
 
-rthpdist <- function(m1,m2) {
-   .Call("rthpdist", m1, m2, PACKAGE="Rth")
+rthpdist <- function(m1,m2, nthreads=automatic()) {
+   .Call("rthpdist", m1, m2, as.integer(nthreads), PACKAGE="Rth")
 }
 
 

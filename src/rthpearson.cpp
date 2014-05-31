@@ -10,11 +10,12 @@
 #include <math.h>
 
 #include <Rcpp.h>
+#include "backend.h"
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<double> doublevec;
 
-RcppExport SEXP rthpearson(SEXP x, SEXP y)
+RcppExport SEXP rthpearson(SEXP x, SEXP y, SEXP nthreads)
 {  
    Rcpp::NumericVector xa(x);
    Rcpp::NumericVector ya(y);
@@ -22,6 +23,13 @@ RcppExport SEXP rthpearson(SEXP x, SEXP y)
    doublevec dx(xa.begin(),xa.end());
    doublevec dy(ya.begin(),ya.end());
    double zero = (double) 0.0;
+   
+   #if RTH_OMP
+   omp_set_num_threads(INT(nthreads));
+   #elif RTH_TBB
+   tbb::task_scheduler_init init(INT(nthreads));
+   #endif
+   
    double xy =
       thrust::inner_product(dx.begin(),dx.end(),dy.begin(),zero);
    double x2 =

@@ -1,4 +1,4 @@
-rthgini <- function(x, unbiased=TRUE, na.rm=FALSE)
+rthgini <- function(x, unbiased=TRUE, na.rm=FALSE, nthreads=automatic())
 {
   if (na.rm)
   {
@@ -11,7 +11,7 @@ rthgini <- function(x, unbiased=TRUE, na.rm=FALSE)
   
   mu <- mean(x)
   
-  ret <- .Call("rthgini", x, mu, as.integer(unbiased), PACKAGE="Rth")
+  ret <- .Call("rthgini", x, mu, as.integer(unbiased), as.integer(nthreads), PACKAGE="Rth")
   
   return( ret )
 }

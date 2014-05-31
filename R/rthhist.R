@@ -1,10 +1,10 @@
-rthhist <- function(xname,nbins,nchunks,plot=TRUE) {
+rthhist <- function(xname,nbins,nchunks,plot=TRUE, nthreads=automatic()) {
   x <- get(xname)
   
   if (!is.double(x))
     storage.mode <- "double"
   
-  tmp <- .Call("rthhist", x, as.integer(nbins), as.integer(nchunks),
+  tmp <- .Call("rthhist", x, as.integer(nbins), as.integer(nchunks), as.integer(nthreads),
     PACKAGE="Rth")
   
   if (!plot)

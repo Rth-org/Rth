@@ -11,6 +11,8 @@
 #include <Rcpp.h>
 #include <thrust/device_vector.h>
 
+#include "backend.h"
+
 #ifdef GPU
 #define flouble float
 #else
@@ -70,7 +72,7 @@ struct do1chunk {  // handle one chunk of the data
 
 
 
-RcppExport SEXP rthhist(SEXP x_, SEXP nbins_,  SEXP nch_)
+RcppExport SEXP rthhist(SEXP x_, SEXP nbins_,  SEXP nch_, SEXP nthreads)
 {  
    Rcpp::NumericVector x(x_);
    const int n = x.size();
@@ -81,6 +83,12 @@ RcppExport SEXP rthhist(SEXP x_, SEXP nbins_,  SEXP nch_)
    Rcpp::IntegerVector bincounts(nbins);
    Rcpp::NumericVector R_left(1);
    Rcpp::NumericVector R_binwidth(1);
+   
+   #if RTH_OMP
+   omp_set_num_threads(INT(nthreads));
+   #elif RTH_TBB
+   tbb::task_scheduler_init init(INT(nthreads));
+   #endif
    
    // determine binwidth etc.
    thrust::pair<floubleveciter, floubleveciter> mm = 

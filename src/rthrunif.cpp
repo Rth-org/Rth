@@ -10,6 +10,8 @@
 
 #include <stdint.h>
 
+#include "backend.h"
+
 #include <Rcpp.h>
 
 extern "C" {
@@ -43,27 +45,32 @@ struct parallel_random_uniform : public thrust::unary_function<thrust::tuple<con
 
 
 
-RcppExport SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_)
+RcppExport SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_, SEXP nthreads)
 {
   int i;
   const uint64_t n = (uint64_t) REAL(n_)[0];
   const flouble min = (flouble) REAL(min_)[0];
   const flouble max = (flouble) REAL(max_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
-
-
+  
+  #if RTH_OMP
+  omp_set_num_threads(INT(nthreads));
+  #elif RTH_TBB
+  tbb::task_scheduler_init init(INT(nthreads));
+  #endif
+  
   thrust::device_vector<flouble> vec(n);
-
+  
   thrust::tuple<const unsigned int, const flouble, const flouble> t(seed, min, max);
-
+  
   thrust::transform(thrust::counting_iterator<int>(0),
     thrust::counting_iterator<int>(n),
     vec.begin(),
     parallel_random_uniform(t));
-
+  
   thrust::host_vector<flouble> x(n);
   thrust::copy(vec.begin(), vec.end(), x.begin());
-
+  
   return Rcpp::wrap(x);
 }
 

@@ -6,9 +6,8 @@
 #include <thrust/device_vector.h>
 #include <thrust/detail/config.h>
 
-#include "backend.h"
-
 #include <Rcpp.h>
+#include "backend.h"
 
 
 typedef thrust::device_vector<int> intvec;
@@ -71,7 +70,7 @@ struct do1chunk {  // handle one chunk of the data
 
 
 
-RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP nch_)
+RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP nch_, SEXP nthreads)
 {
   Rcpp::IntegerVector m(m_);
   const int n = INTEGER(n_)[0];
@@ -80,6 +79,12 @@ RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP 
   const int ndim = INTEGER(ndim_)[0];
   int nch = INTEGER(nch_)[0];
   Rcpp::NumericVector freq(ndim);
+  
+  #if RTH_OMP
+  omp_set_num_threads(INT(nthreads));
+  #elif RTH_TBB
+  tbb::task_scheduler_init init(INT(nthreads));
+  #endif
   
   // if nch not specified, use Thrust to determine it
   if (nch == 0) {

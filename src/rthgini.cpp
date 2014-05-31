@@ -6,6 +6,8 @@
 
 #include <Rcpp.h>
 
+#include "backend.h"
+
 #ifdef GPU
 #define flouble float
 #else
@@ -36,13 +38,19 @@ struct compute_gini
 
 
 
-RcppExport SEXP rthgini(SEXP x_, SEXP mu_, SEXP unbiased_)
+RcppExport SEXP rthgini(SEXP x_, SEXP mu_, SEXP unbiased_, SEXP nthreads)
 {
   Rcpp::NumericVector x(x_);
   Rcpp::NumericVector mu(mu_);
   const int unbiased = INTEGER(unbiased_)[0];
   const int n = LENGTH(x);
   Rcpp::NumericVector gini(1);
+  
+  #if RTH_OMP
+  omp_set_num_threads(INT(nthreads));
+  #elif RTH_TBB
+  tbb::task_scheduler_init init(INT(nthreads));
+  #endif
   
   thrust::device_vector<double> dx(x.begin(), x.end());
   

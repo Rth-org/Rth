@@ -9,6 +9,8 @@
 
 #include <Rcpp.h>
 
+#include "backend.h"
+
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<double> doublevec;
 typedef intvec::iterator intveciter;
@@ -18,13 +20,19 @@ typedef doublevec::iterator doubleveciter;
 // rank(x) is returned
 //
 // x is overwritten
-RcppExport SEXP rthorder(SEXP x, SEXP rnk) 
+RcppExport SEXP rthorder(SEXP x, SEXP rnk, SEXP nthreads) 
 {  
    Rcpp::NumericVector rx(x);
    const int n = rx.size();
    bool rank = Rcpp::as<bool>(rnk);
    
    Rcpp::IntegerVector ret(n);
+   
+   #if RTH_OMP
+   omp_set_num_threads(INT(nthreads));
+   #elif RTH_TBB
+   tbb::task_scheduler_init init(INT(nthreads));
+   #endif
    
    doublevec dx(rx.begin(),rx.end());
    

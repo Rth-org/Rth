@@ -1,6 +1,6 @@
 
-rthrowsums <- function(m) {
-   .Call("rthrowsums",m, PACKAGE="Rth")
+rthrowsums <- function(m, nthreads=automatic()) {
+   .Call("rthrowsums",m, as.integer(nthreads), PACKAGE="Rth")
 }
 
 

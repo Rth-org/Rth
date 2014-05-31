@@ -2,7 +2,7 @@
 # dim:  vector of upper bds on the variables
 # nch:  number of chunks of computation
 
-rthtable <- function(m,dim,nch=0)
+rthtable <- function(m,dim,nch=0, nthreads=automatic())
 {
   ndim <- prod(dim)
   n <- as.integer(nrow(m))
@@ -11,7 +11,7 @@ rthtable <- function(m,dim,nch=0)
   if (!is.integer(m))
     storage.mode(m) <- "integer"
   
-  freq <- .Call("rthtable", m, n, nv, as.integer(dim), as.integer(ndim), as.integer(nch), 
+  freq <- .Call("rthtable", m, n, nv, as.integer(dim), as.integer(ndim), as.integer(nch), as.integer(nthreads), 
     PACKAGE="Rth")
   
   tbl <- array(freq, dim)

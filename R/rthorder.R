@@ -1,10 +1,10 @@
 # author: N. Matloff
 
-rthorder <- function(x, rnk=FALSE) {
+rthorder <- function(x, rnk=FALSE, nthreads=automatic()) {
    if (!is.double(x))
       storage.mode(x) <- "double"
    
-   ret <- .Call("rthorder", x, rnk, PACKAGE="Rth")
+   ret <- .Call("rthorder", x, rnk, as.integer(nthreads), PACKAGE="Rth")
    
    # convert from C's 0-based indexing to R's 1-based
    return(ret + 1L)

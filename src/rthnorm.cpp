@@ -5,6 +5,8 @@
 
 #include <Rcpp.h>
 
+#include "backend.h"
+
 #ifdef GPU
 #define flouble float
 #else
@@ -93,7 +95,7 @@ double calc_dist(double *x, const double *y, const unsigned int len, const doubl
 
 
 // Wrappers
-RcppExport SEXP rth_norm(SEXP x_, SEXP p_)
+RcppExport SEXP rth_norm(SEXP x_, SEXP p_, SEXP nthreads)
 {
   double *x = REAL(x_);
   int len = LENGTH(x_);
@@ -101,6 +103,11 @@ RcppExport SEXP rth_norm(SEXP x_, SEXP p_)
   
   Rcpp::NumericVector nrm(1);
   
+  #if RTH_OMP
+  omp_set_num_threads(INT(nthreads));
+  #elif RTH_TBB
+  tbb::task_scheduler_init init(INT(nthreads));
+  #endif
   
   nrm[0] = calc_norm(x, len, p);
   

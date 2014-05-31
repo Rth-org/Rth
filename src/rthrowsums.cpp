@@ -3,7 +3,9 @@
 #include <thrust/device_vector.h>
 #include <Rcpp.h>
 
-#include<stdio.h>
+#include <stdio.h>
+
+#include "backend.h"
 
 // Rth substitute for R's rowSums()
 
@@ -38,11 +40,18 @@ struct do1ival
 };
 
 // return R vector of row usms of inmat
-RcppExport SEXP rthrowsums(SEXP inmat)
+RcppExport SEXP rthrowsums(SEXP inmat, SEXP nthreads)
 {
    Rcpp::NumericMatrix im(inmat);
    int nr = im.nrow();
    int nc = im.ncol();
+   
+   #if RTH_OMP
+   omp_set_num_threads(INT(nthreads));
+   #elif RTH_TBB
+   tbb::task_scheduler_init init(INT(nthreads));
+   #endif
+   
    // copy to device
    thrust::device_vector<double> dmat(im.begin(),im.end());
    // make space for the output

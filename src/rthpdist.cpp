@@ -4,6 +4,8 @@
 #include <thrust/device_vector.h>
 #include <Rcpp.h>
 
+#include "backend.h"
+
 // Rth substitute for R's pdist package
 
 // note that in addition to R using column-major order, Rcpp uses that
@@ -50,13 +52,20 @@ struct do1ival
 };
 
 // compute distances from rows of inmat1 to rows of inmat2
-RcppExport SEXP rthpdist(SEXP inmat1,SEXP inmat2)
+RcppExport SEXP rthpdist(SEXP inmat1,SEXP inmat2, SEXP nthreads)
 {  
    Rcpp::NumericMatrix im1(inmat1);
    Rcpp::NumericMatrix im2(inmat2);
    int nr1 = im1.nrow();
    int nc = im1.ncol();
    int nr2 = im2.nrow();
+   
+   #if RTH_OMP
+   omp_set_num_threads(INT(nthreads));
+   #elif RTH_TBB
+   tbb::task_scheduler_init init(INT(nthreads));
+   #endif
+   
    thrust::device_vector<double> dmat1(im1.begin(),im1.end());
    thrust::device_vector<double> dmat2(im2.begin(),im2.end());
    // make space for the output

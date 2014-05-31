@@ -9,6 +9,8 @@
 
 #include <Rcpp.h>
 
+#include "backend.h"
+
 // note that R uses column-major order, and Rcpp vectors retain this
 // ordering
 
@@ -28,11 +30,18 @@ struct lintocol: public thrust::unary_function<int,int>
 };
 
 // matrix m with nr rows 
-RcppExport SEXP rthcolsums(SEXP m) {
+RcppExport SEXP rthcolsums(SEXP m, SEXP nthreads) {
    Rcpp::NumericMatrix tmpm = Rcpp::NumericMatrix(m);
    int nr = tmpm.nrow();
    int nc = tmpm.ncol();
    Rcpp::NumericVector xm = Rcpp::NumericVector(m);
+   
+   #if RTH_OMP
+   omp_set_num_threads(INT(nthreads));
+   #elif RTH_TBB
+   tbb::task_scheduler_init init(INT(nthreads));
+   #endif
+   
    // colsums will be device vector for the column sums
    thrust::device_vector<double> colsums(nr);
    //

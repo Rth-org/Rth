@@ -12,6 +12,8 @@
 #include <Rcpp.h>
 #include <thrust/device_vector.h>
 
+#include "backend.h"
+
 #ifdef GPU
 #define flouble float
 #else
@@ -45,12 +47,18 @@ struct calcgti {  // handle 1 i, all j > i
 
 
 
-RcppExport SEXP rthkendall(SEXP x_, SEXP y_)
+RcppExport SEXP rthkendall(SEXP x_, SEXP y_, SEXP nthreads)
 {
   Rcpp::NumericVector x(x_);
   Rcpp::NumericVector y(y_);
   Rcpp::NumericVector RET(1);
   const int n = LENGTH(x);
+  
+  #if RTH_OMP
+  omp_set_num_threads(INT(nthreads));
+  #elif RTH_TBB
+  tbb::task_scheduler_init init(INT(nthreads));
+  #endif
   
   thrust::counting_iterator<int> seqa(0);
   thrust::counting_iterator<int> seqb =  seqa + n - 1;
