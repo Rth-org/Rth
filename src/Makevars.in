@@ -30,7 +30,8 @@ R_OBJS = \
 	rthrowsums.o \
 	rthrunif.o \
 	rthsort.o \
-	rthtable.o
+	rthtable.o \
+	threads.o
 
 
 OBJECTS = $(R_OBJS)
