@@ -6,6 +6,8 @@
 #include <thrust/device_vector.h>
 #include <thrust/detail/config.h>
 
+#include "backend.h"
+
 #include <Rcpp.h>
 
 
@@ -81,12 +83,12 @@ RcppExport SEXP rthtable(SEXP m_, SEXP n_, SEXP nv_, SEXP dim, SEXP ndim_, SEXP 
   
   // if nch not specified, use Thrust to determine it
   if (nch == 0) {
-    #if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
+    #if RTH_TBB
     Rcpp::stop("you must specify nch>0 for TBB backend");
     #else
     thrust::system::detail::internal::uniform_decomposition<int>
       decomp1 =
-      # if THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_OMP
+      # if RTH_OMP
         thrust::system::omp::detail::default_decomposition(n);
       # else
         thrust::system::cuda::detail::default_decomposition(n);
