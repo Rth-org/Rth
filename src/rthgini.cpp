@@ -60,9 +60,7 @@ RcppExport SEXP rthgini(SEXP x_, SEXP mu_, SEXP unbiased_, SEXP nthreads)
   thrust::counting_iterator<int> end = begin + n;
   
   thrust::plus<flouble> binop;
-  flouble init = 0.;
-//  gini[0] = (double) thrust::transform_reduce(dx.begin(), dx.end(), compute_gini(n), init, binop);
-  gini[0] = (double) thrust::transform_reduce(begin, end, compute_gini(n, dx.begin()), init, binop);
+  gini[0] = (double) thrust::transform_reduce(begin, end, compute_gini(n, dx.begin()), (flouble) 0., binop);
   
   if (unbiased)
     gini[0] = gini[0]/n/(n-1)/mu[0];

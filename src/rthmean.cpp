@@ -47,8 +47,7 @@ RcppExport SEXP rthmean(SEXP x_, SEXP nthreads)
   thrust::device_vector<flouble> dx(x.begin(), x.end());
   
   thrust::plus<flouble> binop;
-  flouble init = 0.;
-  avg[0] = (double) thrust::transform_reduce(dx.begin(), dx.end(), div_by_n(n), init, binop);
+  avg[0] = (double) thrust::transform_reduce(dx.begin(), dx.end(), div_by_n(n), (flouble) 0., binop);
   
   return avg;
 }
