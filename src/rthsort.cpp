@@ -3,12 +3,13 @@
 
 #include <thrust/device_vector.h>
 #include <thrust/sort.h>
+#include <thrust/sort.h>
 
 #include <Rcpp.h>
 #include "backend.h"
 
 
-RcppExport SEXP rthsort_double(SEXP a, SEXP nthreads)
+RcppExport SEXP rthsort_double(SEXP a, SEXP decreasing, SEXP nthreads)
 {
   Rcpp::NumericVector xa(a);
   
@@ -22,13 +23,19 @@ RcppExport SEXP rthsort_double(SEXP a, SEXP nthreads)
   thrust::device_vector<double> dx(xa.begin(), xa.end());
   
   // sort, then copy back to xa
-  thrust::sort(dx.begin(), dx.end());
+  if (INTEGER(decreasing)[0])
+    thrust::sort(dx.begin(), dx.end(), thrust::greater<double>());
+  else
+    thrust::sort(dx.begin(), dx.end());
+  
   thrust::copy(dx.begin(), dx.end(), xa.begin());
   
   return xa;
 }
 
-RcppExport SEXP rthsort_int(SEXP a, SEXP nthreads)
+
+
+RcppExport SEXP rthsort_int(SEXP a, SEXP decreasing, SEXP nthreads)
 {
   Rcpp::IntegerVector xa(a);
   
@@ -39,7 +46,12 @@ RcppExport SEXP rthsort_int(SEXP a, SEXP nthreads)
   #endif
   
   thrust::device_vector<int> dx(xa.begin(), xa.end());
-  thrust::sort(dx.begin(), dx.end());
+  
+  if (INTEGER(decreasing)[0])
+    thrust::sort(dx.begin(), dx.end(), thrust::greater<int>());
+  else
+    thrust::sort(dx.begin(), dx.end());
+  
   thrust::copy(dx.begin(), dx.end(), xa.begin());
   
   return xa;
