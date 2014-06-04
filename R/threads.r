@@ -4,15 +4,7 @@ rth.get.backend <- function()
 }
 
 
-### FIXME doesn't work with Rth, probably works with BLAS ???
-omp.set.num.threads <- function(n)
-{
-  .Call("Rth_omp_set_num_threads", as.integer(n), PACKAGE="Rth")
-  
-  invisible()
-}
 
-### this is stupid
 omp.get.num.threads <- function()
 {
   nthreads <- .Call("Rth_omp_get_num_threads", PACKAGE="Rth")
@@ -21,17 +13,29 @@ omp.get.num.threads <- function()
 }
 
 
+
+tbb.get.num.threads <- function()
+{
+  nthreads <- .Call("Rth_tbb_auto_threads", PACKAGE="Rth")
+  
+  return( nthreads )
+}
+
+
+
 automatic <- function()
 {
   backend <- rth.get.backend()
   if (backend == "omp")
   {
-    nthreads <- parallel::detectCores()
-#    omp.set.num.threads(nthreads)
+    nthreads <- omp.get.num.threads()
     return( nthreads )
   }
   else if (backend == "tbb")
-    return( -1L )
+  {
+    nthreads <- tbb.get.num.threads()
+    return( nthreads )
+  }
   else
     return( as.integer(NA) )
 }

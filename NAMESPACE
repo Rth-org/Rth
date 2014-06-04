@@ -1,5 +1,3 @@
 useDynLib(Rth)
 
-import(parallel)
-
 exportPattern("^[[:alpha:]]+")
