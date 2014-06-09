@@ -30,7 +30,7 @@ RcppExport SEXP rthsort_double(SEXP a, SEXP decreasing, SEXP inplace,
     thrust::sort(dx.begin(), dx.end());
   if (INTEGER(inplace)[0]) {
      thrust::copy(dx.begin(), dx.end(), xa.begin());
-     return xa;
+     // return xa;
   } else {
      Rcpp::NumericVector xb(xa.size());
      thrust::copy(dx.begin(), dx.end(), xb.begin());
