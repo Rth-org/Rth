@@ -27,7 +27,6 @@ R_OBJS = \
 	rthpdist.o \
 	rthpearson.o \
 	rthrnorm.o \
-	rthrowsums.o \
 	rthrunif.o \
 	rthsort.o \
 	rthtable.o \
