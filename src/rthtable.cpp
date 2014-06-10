@@ -93,7 +93,9 @@ RcppExport SEXP rthtable(SEXP x_, SEXP lb_, SEXP ub_,
    #if RTH_OMP
    omp_set_num_threads(INT(nthreads));
    #elif RTH_TBB
-   tbb::task_scheduler_init init(INT(nthreads));
+   // tbb::task_scheduler_init init(INT(nthreads));
+   // for unknown reasons, this code does not work under TBB
+   return Rcpp::wrap(1);
    #endif
    
    // form matrix of cell counts, one row per chunk, row-major order

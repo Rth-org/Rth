@@ -19,6 +19,7 @@ rthtable <- function(m,lb,ub,varnames=NULL,nthreads=automatic(),nch=nthreads)
      storage.mode(m) <- "integer"
    
    freq <- .Call("rthtable",m,lb,ub,as.integer(nch),as.integer(nthreads))
+   if (freq == 1) stop("this function does not yet work under TBB")
    
    # dimension labels
    dnn <- list()

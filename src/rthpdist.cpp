@@ -63,7 +63,9 @@ RcppExport SEXP rthpdist(SEXP inmat1,SEXP inmat2, SEXP nthreads)
    #if RTH_OMP
    omp_set_num_threads(INT(nthreads));
    #elif RTH_TBB
-   tbb::task_scheduler_init init(INT(nthreads));
+   // tbb::task_scheduler_init init(INT(nthreads));
+   // for unknown reasons, this code does not work under TBB
+   return Rcpp::wrap(-1);
    #endif
    
    thrust::device_vector<double> dmat1(im1.begin(),im1.end());
