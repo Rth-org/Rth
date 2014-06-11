@@ -10,6 +10,8 @@
     # cores
 */
 
+#define RTH_ERROR -2147483648 // int NA in R
+
 extern "C" {
 
 SEXP Rth_get_backend()
@@ -33,7 +35,7 @@ SEXP Rth_get_backend()
 
 
 
-SEXP Rth_omp_get_num_threads()
+SEXP Rth_get_num_threads()
 {
   char *rth_nthreads = getenv("RTH_NUM_THREADS");
   char *omp_nthreads = getenv("OMP_NUM_THREADS");
@@ -43,40 +45,23 @@ SEXP Rth_omp_get_num_threads()
   
   #if RTH_OMP
   if (rth_nthreads != NULL)
-    INT(nthreads) = rth_nthreads[0] - '0';
+    INT(nthreads) = atoi(rth_nthreads);
   else if (omp_nthreads != NULL)
-    INT(nthreads) = omp_nthreads[0] - '0';
+    INT(nthreads) = atoi(omp_nthreads);
   else
     INT(nthreads) = omp_get_max_threads(); // omp_get_max_threads
+  #elif RTH_TBB
+  if (rth_nthreads != NULL)
+    INT(nthreads) = atoi(rth_nthreads);
+  else
+    INT(nthreads) = tbb::task_scheduler_init::automatic;
   #else
-  INT(nthreads) = -1;
+  INT(nthreads) = RTH_ERROR;
   #endif
   
   
   UNPROTECT(1);
   return nthreads;
-}
-
-
-
-SEXP Rth_tbb_auto_threads()
-{
-  char *rth_nthreads = getenv("RTH_NUM_THREADS");
-  
-  SEXP ret;
-  PROTECT(ret = allocVector(INTSXP, 1));
-  
-  #if RTH_TBB
-  if (rth_nthreads != NULL)
-    INT(ret) = rth_nthreads[0] - '0';
-  else
-    INT(ret) = -1;
-  #else
-  INT(ret) = -1;
-  #endif
-  
-  UNPROTECT(1);
-  return ret;
 }
 
 }
