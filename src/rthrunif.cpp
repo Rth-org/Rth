@@ -37,6 +37,7 @@ struct parallel_random_uniform : public thrust::unary_function<thrust::tuple<con
     unsigned int seed = thrust_hash(threadIdx) * thrust::get<0>(t);
 
     thrust::default_random_engine rng(seed);
+//    thrust::random::taus88 rng(seed);
     thrust::uniform_real_distribution<flouble> u01(thrust::get<1>(t), thrust::get<2>(t));
 
     return u01(rng);
