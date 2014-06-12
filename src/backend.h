@@ -12,7 +12,7 @@
 #include <omp.h>
 #define RTH_OMP 1
 
-#elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_SYSTEM_TBB
+#elif THRUST_DEVICE_SYSTEM == THRUST_DEVICE_BACKEND_TBB
 #include "tbb/task_scheduler_init.h"
 #define RTH_TBB 1
 
