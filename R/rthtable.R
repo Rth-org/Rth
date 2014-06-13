@@ -36,3 +36,36 @@ rthtable <- function(m,lb,ub,varnames=NULL,nthreads=automatic(),nch=nthreads)
    tbl
 }
 
+# converts linear array indices to one for the table output of rthtable;
+# useful e.g. in identifying which cells are extremes
+#
+#   lins:  vector of linear indices of interest 
+#   lb, ub:  as in rthtable(), but must be fully specified, no reliance
+#            on recycling
+#
+# output value is matrix, row i giving the multidimensional index for
+# lins[i]
+
+arylin2mult <- function(lins,lb,ub) {
+   d <- length(lb)  # dimension of table
+   # products of lengths of the dimensions, e.g. number of rows times
+   # number of columns times number of layers
+   prods <- vector(length=d)
+   prd <- 1
+   for (i in 1:d) {
+      prods[i] <- prd
+      prd <- prd * (ub[i] - lb[i] + 1)
+   }
+   nlins <- length(lins)
+   multixs <- matrix(nrow=nlins,ncol=d)
+   for (i in 1:nlins) {
+      s <- lins[i] - 1
+      for (j in d:1) {
+         multixs[i,j] <- s %/% prods[j]
+         s <- s %% prods[j]
+      }
+   }
+   # translate 0-based indices to values of the table variables
+   multixs + rep(lb,each=nlins)
+}
+
