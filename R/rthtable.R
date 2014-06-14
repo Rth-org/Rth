@@ -2,10 +2,12 @@
 # lb:  vector of lower bds on the variables
 # ub:  vector of upper bds on the variables
 # varnames:  names of each dimension
+# dnn:  list of names of elements of dimension
 # nch:  number of chunks of computation
 # nthreads:  number of threads (OMP, TBB cases)
 
-rthtable <- function(m,lb,ub,varnames=NULL,nthreads=automatic(),nch=nthreads)
+rthtable <- function(m,lb,ub,varnames=NULL,dnn=NULL,
+   nthreads=automatic(),nch=nthreads)
 {
    if(rth.get.backend() == "tbb")
       stop("this function does not yet work under TBB")
@@ -25,10 +27,13 @@ rthtable <- function(m,lb,ub,varnames=NULL,nthreads=automatic(),nch=nthreads)
    freq <- .Call("rthtable",m,lb,ub,as.integer(nch),as.integer(nthreads))
    
    # dimension labels
-   dnn <- list()
-   for (i in 1:nv) {
-      dnn[[i]] <- as.character(lb[i]:ub[i])
+   if (is.null(dnn)) {
+      dnn <- list()
+      for (i in 1:nv) {
+         dnn[[i]] <- as.character(lb[i]:ub[i])
+      }
    }
+   # dimension names
    if (!is.null(varnames)) names(dnn) <- varnames
 
    tbl <- array(freq,dim,dimnames=dnn)
