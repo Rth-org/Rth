@@ -6,12 +6,12 @@
   Sorts a numeric vector into ascending or descending order.
 }
 \usage{
-  rthsort(x, descending=FALSE, inplace=FALSE, nthreads=rth.nthreads())
+  rthsort(x, decreasing=FALSE, inplace=FALSE, nthreads=rth.nthreads())
 }
 \arguments{
   \item{x}{a numeric vector}
-  \item{descending}{logical; determines if the sort is ascending
-  (\code{ascending=TRUE}) or descending (\code{decreasing=TRUE}).}
+  \item{decreasing}{logical; determines if the sort is ascending
+  (\code{decreasing=FALSE}) or descending (\code{decreasing=TRUE}).}
   \item{inplace}{If TRUE, \code{x} is sorted in-place, no new R vectory
   created.}
   \item{nthreads}{An optional argument for specifying the number of
@@ -23,7 +23,6 @@
   necessarily preserve the order of tied values.
 }
 \value{
-  If \code{inplace} is FALSE:
   If \code{decreasing=FALSE}, then the input vector is returned in
   ascending order.  Otherwise, the input vector is returned in 
   descending order.

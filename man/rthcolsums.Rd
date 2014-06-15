@@ -23,7 +23,7 @@ rthcolsums(m, nthreads=rth.nthreads())
 }
 
 \value{
-Vector of column sums.}
+Vector of column sums.
 }
 
 \author{
