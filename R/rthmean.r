@@ -1,5 +1,5 @@
 ### slow, don't use
-rthmean <- function(x, nthreads=automatic())
+rthmean <- function(x, nthreads=rth.nthreads())
 {
   if (!is.double(x))
     storage.mode(x) <- "double"

@@ -7,7 +7,7 @@
 # nthreads:  number of threads (OMP, TBB cases)
 
 rthtable <- function(m,lb,ub,varnames=NULL,dnn=NULL,
-   nthreads=automatic(),nch=nthreads)
+   nthreads=rth.nthreads(),nch=nthreads)
 {
    if(rth.get.backend() == "tbb")
       stop("this function does not yet work under TBB")

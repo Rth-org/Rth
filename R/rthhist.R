@@ -1,5 +1,5 @@
 rthhist <- function(xname,nbins=15,plot=TRUE, 
-   nthreads=automatic(),nchunks=nthreads) {
+   nthreads=rth.nthreads(),nchunks=nthreads) {
 
   # in TBB cases, automatic() returns -1, the code for giving TBB carte
   # blanche

@@ -1,6 +1,6 @@
 # author: N. Matloff
 
-rthkendall <- function(x,y, nthreads=automatic())
+rthkendall <- function(x,y, nthreads=rth.nthreads())
 {
   if (!is.double(x))
     storage.mode(x) <- "double"

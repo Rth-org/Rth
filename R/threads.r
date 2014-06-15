@@ -15,10 +15,10 @@ get.num.threads <- function()
 
 
 
-automatic <- function()
+rth.nthreads <- function()
 {
   backend <- rth.get.backend()
-  nthreads <- get.num.threads()
+  nthreads <- as.integer(get.num.threads())
   
   return( nthreads )
 }

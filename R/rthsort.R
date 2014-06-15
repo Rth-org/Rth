@@ -1,4 +1,4 @@
-rthsort <- function(x, decreasing=FALSE, inplace=FALSE, nthreads=automatic())
+rthsort <- function(x, decreasing=FALSE, inplace=FALSE, nthreads=rth.nthreads())
 {
   nthreads <- as.integer(nthreads)
   

@@ -6,8 +6,7 @@ RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
 PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/ 
 PKG_LIBS = $(RCPP_LDFLAGS) @RTH_LDFLAGS@
 
-COMMON_PKG_CPPFLAGS = -Wfatal-errors
-PKG_CPPFLAGS = $(COMMON_PKG_CPPFLAGS) @RTH_CPPFLAGS@
+PKG_CPPFLAGS = @RTH_CPPFLAGS@   # -Wfatal-errors
 
 
 #$(CC)=@NVCC@

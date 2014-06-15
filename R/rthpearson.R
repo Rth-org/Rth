@@ -1,6 +1,6 @@
 # author: N. Matloff
 
-rthpearson <- function(x,y, nthreads=automatic()) {
+rthpearson <- function(x,y, nthreads=rth.nthreads()) {
    if (!is.double(x))
       storage.mode(x) <- "double"
    if (!is.double(y))
