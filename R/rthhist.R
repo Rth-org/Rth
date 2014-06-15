@@ -4,6 +4,7 @@ rthhist <- function(xname,nbins=15,plot=TRUE,
   # in TBB cases, automatic() returns -1, the code for giving TBB carte
   # blanche
   if (nthreads == -1) nchunks <- 2
+
   if (mode(xname) != "character") 
      stop("the data vector must be specified by quoted name")
   x <- get(xname)
