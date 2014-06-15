@@ -6,7 +6,7 @@
   Sorts a numeric vector into ascending or descending order.
 }
 \usage{
-  rthsort(x, descending=FALSE, inplace=FALSE, nthreads=automatic())
+  rthsort(x, descending=FALSE, inplace=FALSE, nthreads=rth.nthreads())
 }
 \arguments{
   \item{x}{a numeric vector}

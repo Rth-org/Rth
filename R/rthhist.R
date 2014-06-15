@@ -1,5 +1,5 @@
 rthhist <- function(xname,nbins=15,plot=TRUE, 
-   nthreads=automatic(),nchunks=nthreads) {
+   nthreads=rth.nthreads(),nchunks=nthreads) {
 
   if (mode(xname) != "character") 
      stop("the data vector must be specified by quoted name")

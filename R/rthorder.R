@@ -1,6 +1,6 @@
 # author: N. Matloff
 
-rthorder <- function(x, rnk=FALSE, nthreads=automatic()) {
+rthorder <- function(x, rnk=FALSE, nthreads=rth.nthreads()) {
    if (!is.double(x))
       storage.mode(x) <- "double"
    

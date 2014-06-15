@@ -8,7 +8,7 @@
 }
 \usage{
   rthtable(m, lb, ub, varnames = NULL, dnn = NULL, 
-     nthreads = automatic(), nch = nthreads) 
+     nthreads = rth.nthreads(), nch = nthreads) 
   arylin2mult(lins, lb, ub) 
 }
 \arguments{

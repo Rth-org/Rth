@@ -11,7 +11,7 @@ For the given input matrix, returns the vector of column sums.
 }
 
 \usage{
-rthcolsums(m, nthreads=automatic()) 
+rthcolsums(m, nthreads=rth.nthreads()) 
 }
 
 \arguments{
