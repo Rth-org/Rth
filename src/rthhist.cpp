@@ -2,12 +2,8 @@
 // Rth histogram computation
 
 // break data in to chunks, computing a histogram on each, then
-// combining; number of chunks is hopefully about the same as the number
-// of threads
+// combining
    
-// extern "C" void rthhist(double *x, int *nptr, int *nchptr, int
-// *nbinsptr, int *bincounts, double *leftptr, double *binwidthptr);
-
 #include <Rcpp.h>
 #include <thrust/device_vector.h>
 
