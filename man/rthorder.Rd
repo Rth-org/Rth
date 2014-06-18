@@ -12,11 +12,13 @@
   \item{x}{A numeric vector.}
   \item{rnk}{Logical; if TRUE, the result is like a call to R's
   \code{rank()}; if FALSE, it is like R's \code{order()}.}
-  \item{nthreads}{See \link{rsort}.}
+  \item{nthreads}{An optional argument for specifying the number of
+  threads (in the case of OpenMP or TBB backends) that the routine
+  should (at most) use.  Does nothing with a CUDA backend.  See
+  \link{nthreads}.}
 }
 \value{
   Vector of indices for either order or rank operation..
-}
 }
 \examples{
 \dontrun{

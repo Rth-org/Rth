@@ -16,10 +16,10 @@ rthcolsums(m, nthreads=rth.nthreads())
 
 \arguments{
    \item{m}{The data, in data frame or matrix form.}  
-   \item{nthreads}{Number of threads, in the case of OpenMP or TBB
-      backends.  The authors of TBB recommend that normally the user
-      should allow TBB itself to determine this, and even if used, it
-      will be interpreted as the maximum number of threads.}
+   \item{nthreads}{An optional argument for specifying the number of
+  threads (in the case of OpenMP or TBB backends) that the routine
+  should (at most) use.  Does nothing with a CUDA backend.  See
+  \link{nthreads}.}
 }
 
 \value{

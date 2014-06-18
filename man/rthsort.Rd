@@ -16,7 +16,8 @@
   created.}
   \item{nthreads}{An optional argument for specifying the number of
   threads (in the case of OpenMP or TBB backends) that the routine
-  should (at most) use.  Does nothing with a CUDA backend.}
+  should (at most) use.  Does nothing with a CUDA backend.  See
+  \link{nthreads}.}
 }
 \details{
   The implementation uses \code{thrust::sort}, which does not

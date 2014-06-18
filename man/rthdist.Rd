@@ -14,7 +14,10 @@
   \item{m}{Matrix/data frame for between-rows distance computation.}
   \item{m1}{First matrix/data frame for between-matrices distance computation.}
   \item{m2}{Second matrix/data frame for between-matrices distance computation.}
-  \item{nthreads}{See \link{rthsort}.}
+  \item{nthreads}{An optional argument for specifying the number of
+  threads (in the case of OpenMP or TBB backends) that the routine
+  should (at most) use.  Does nothing with a CUDA backend.  See
+  \link{nthreads}.}
 }
 \details{
   Calling \code{rthdist()} on the matrix \code{m} returns the euclidean

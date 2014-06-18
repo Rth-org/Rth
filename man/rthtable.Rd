@@ -19,7 +19,8 @@
   \item{dnn}{List of names of the levels of the variables.}
   \item{nthreads}{An optional argument for specifying the number of
   threads (in the case of OpenMP or TBB backends) that the routine
-  should (at most) use.  Does nothing with a CUDA backend.}
+  should (at most) use.  Does nothing with a CUDA backend.  See
+  \link{nthreads}.}
   \item{nch}{Number of chunks for partitioning the data.}
   \item{lins}{Linear indices to convert to multidimensional ones.}
 }

@@ -1,4 +1,5 @@
 \name{nthreads}
+\alias{nthreads}
 \alias{rth.nthreads}
 
 \title{Determining the Number of Threads a Routine Uses}

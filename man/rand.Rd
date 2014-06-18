@@ -18,7 +18,8 @@
   \item{seed}{Seed for the random number generation.}
   \item{nthreads}{An optional argument for specifying the number of
   threads (in the case of OpenMP or TBB backends) that the routine
-  should (at most) use.  Does nothing with a CUDA backend.}
+  should (at most) use.  Does nothing with a CUDA backend.  See
+  \link{nthreads}.}
 }
 \details{
   \code{rthrunif()} uses thrust's implementation of the minimal standard 
