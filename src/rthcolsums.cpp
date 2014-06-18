@@ -34,7 +34,7 @@ RcppExport SEXP rthcolsums(SEXP m, SEXP nthreads) {
    Rcpp::NumericMatrix tmpm = Rcpp::NumericMatrix(m);
    int nr = tmpm.nrow();
    int nc = tmpm.ncol();
-   Rcpp::NumericVector xm = Rcpp::NumericVector(m);
+   Rcpp::NumericVector hm = Rcpp::NumericVector(m);
    
    #if RTH_OMP
    omp_set_num_threads(INT(nthreads));
@@ -62,7 +62,9 @@ RcppExport SEXP rthcolsums(SEXP m, SEXP nthreads) {
       // end of the input key vector, 
       thrust::make_transform_iterator(thrust::counting_iterator<int>(0), 
          lintocol(nr)) + (nr*nc),
-      xm.begin(),  // data, in this case our input matrix
+      // hm is on host, so this won't work on CUDA, but even if copy to
+      // device, still have odd problems on CUDA
+      hm.begin(),  // data, in this case our input matrix
       // output keys, not used in this case, but deals with "empty rows"
       // in "ragged matrix" settings
       colindices.begin(),  
