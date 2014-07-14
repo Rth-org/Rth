@@ -1,5 +1,5 @@
-\name{rthsort}
-\alias{rthsort}
+\name{rthma}
+\alias{rthma}
 
 \title{Parallel Moving Average}
 \description{
