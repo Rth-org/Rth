@@ -29,6 +29,7 @@ R_OBJS = \
 	rthrunif.o \
 	rthsort.o \
 	rthtable.o \
+	rthma.o \
 	rthxpos.o \
 	threads.o
 
