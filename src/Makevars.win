@@ -1,0 +1,43 @@
+#################################################################
+
+RCPP_CXXFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"`
+RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
+
+PKG_CXXFLAGS = $(RCPP_CXXFLAGS) 
+PKG_LIBS = $(RCPP_LDFLAGS) $(SHLIB_OPENMP_CFLAGS)
+
+PKG_CPPFLAGS = -DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \
+		$(SHLIB_OPENMP_CFLAGS) -I../inst/include/ # -Wfatal-errors
+
+
+#R_OBJS = $(wildcard *.cpp)
+R_OBJS = \
+	hash.o \
+	rthcolsums.o \
+	rthdist.o \
+	rthgini.o \
+	rthhist.o \
+	rthkendall.o \
+	rthmean.o \
+	rthnorm.o \
+	rthorder.o \
+	rthpdist.o \
+	rthpearson.o \
+	rthrnorm.o \
+	rthrunif.o \
+	rthsort.o \
+	rthtable.o \
+	rthxpos.o \
+	threads.o
+
+OBJECTS = $(R_OBJS)
+
+all: $(SHLIB)
+
+$(SHLIB): $(OBJECTS)
+
+
+clean:
+	@rm -rf *.o *.so *.dll \
+		Makevars $(USER_CONF) $(SHLIB) $(OBJECTS)
+
