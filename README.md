@@ -54,9 +54,14 @@ For the multicore case, you will need a C++ compiler with an OpenMP library
 
 ## License and Copying
 
-Copyright 2012-2014, Norm Matloff, with Contributions from:
+Authors:
+
+* Norm Matloff
+
+Contributors:
 
 * Drew Schmidt
 
+
 The project is licensed under the GNU General Public License (GPL) 
-version >= 2.
+version >= 2.  Copyright 2012-2014 
