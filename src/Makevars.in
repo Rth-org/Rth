@@ -1,16 +1,12 @@
 #################################################################
 
-RCPP_CXXFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"`
-RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
+RCPP_CXXFLAGS = @RCPP_CXXFLAGS@
+RCPP_LDFLAGS = @RCPP_LDFLAGS@
 
-PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/ 
+PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/
 PKG_LIBS = $(RCPP_LDFLAGS) @RTH_LDFLAGS@
 
 PKG_CPPFLAGS = @RTH_CPPFLAGS@   # -Wfatal-errors
-
-
-#$(CC)=@NVCC@
-#$(CFLAGS)="$(CFLAGS) @NVCCFLAGS@"
 
 
 R_OBJS = \
@@ -36,13 +32,26 @@ R_OBJS = \
 
 OBJECTS = $(R_OBJS)
 
-all: $(SHLIB)
+#all: CUDA
 
-$(SHLIB): $(OBJECTS)
+#$(SHLIB): CUDA
 
+#FIXME
+R_INC := "/usr/share/R/include" #$(R_HOME)/include 
+R_LIB := $(R_HOME)/lib
 
-#x.o: x.c
-#  $(CC) $(ALL_CPPFLAGS) $(CFLAGS) -c x.c -o $@
+INCS := -I"$(CUDA_HOME)/include" -I"$(R_INC)" -I"$(RCPP_CXXFLAGS)" -I"../inst/include/"
+
+NVCC = @NVCC@
+
+SOURCES = $(wildcard *.cpp)
+OBJS = $(notdir $(SOURCES:.cpp=.o))
+
+%.o: %.cpp
+	$(NVCC) -x cu -c -Xcompiler "-fpic" $(INCS) $< -o $@
+
+rth.so: $(OBJS)
+	$(NVCC) --shared $(OBJS) -o $@
 
 
 clean:
