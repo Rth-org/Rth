@@ -37,21 +37,18 @@ OBJECTS = $(R_OBJS)
 #$(SHLIB): CUDA
 
 #FIXME
+NVCC = @NVCC@
+
 R_INC := "/usr/share/R/include" #$(R_HOME)/include 
 R_LIB := $(R_HOME)/lib
 
-INCS := -I"$(CUDA_HOME)/include" -I"$(R_INC)" -I"$(RCPP_CXXFLAGS)" -I"../inst/include/"
-
-NVCC = @NVCC@
-
-SOURCES = $(wildcard *.cpp)
-OBJS = $(notdir $(SOURCES:.cpp=.o))
+CUDA_INCS := -I"$(CUDA_HOME)/include" -I"$(R_INC)" -I"$(RCPP_CXXFLAGS)" -I"../inst/include/"
 
 %.o: %.cpp
-	$(NVCC) -x cu -c -Xcompiler "-fpic" $(INCS) $< -o $@
+	$(NVCC) -DGPU -x cu -c -Xcompiler "-fpic" $(CUDA_INCS) $< -o $@
 
-rth.so: $(OBJS)
-	$(NVCC) --shared $(OBJS) -o $@
+Rth.so: $(OBJECTS)
+	$(NVCC) --shared $(OBJECTS) -o $@
 
 
 clean:
