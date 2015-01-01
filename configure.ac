@@ -119,7 +119,6 @@ elif test "X${BACKEND}" = "XCUDA"; then
   
   ### I hate nvcc
   RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`
-  AC_SUBST(RTH_CXX)
 else
   AC_MSG_ERROR([Unknown backend; use one of OPENMP, TBB, or CUDA.])
 fi

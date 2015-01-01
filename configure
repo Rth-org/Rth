@@ -627,7 +627,6 @@ RCPP_CXXFLAGS
 RTH_LDFLAGS
 RTH_CPPFLAGS
 BACKEND
-RTH_CXX
 EGREP
 GREP
 CXXCPP
@@ -3690,7 +3689,6 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   ### I hate nvcc
   RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`
-
 else
   as_fn_error $? "Unknown backend; use one of OPENMP, TBB, or CUDA." "$LINENO" 5
 fi

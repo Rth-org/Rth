@@ -45,7 +45,7 @@ R_LIB := $(R_HOME)/lib
 CUDA_INCS := -I"$(CUDA_HOME)/include" -I"$(R_INC)" -I"$(RCPP_CXXFLAGS)" -I"../inst/include/"
 
 %.o: %.cpp
-	$(NVCC) -DGPU -x cu -c -Xcompiler "-fpic" $(CUDA_INCS) $< -o $@
+	$(NVCC) -DGPU -x cu -c -Xcompiler "-fPIC" $(CUDA_INCS) $< -o $@
 
 Rth.so: $(OBJECTS)
 	$(NVCC) --shared $(OBJECTS) -o $@
