@@ -4,7 +4,8 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/functional.h>
 
-#include <Rcpp.h>
+#include <R.h>
+#include <Rinternals.h>
 
 #include "backend.h"
 
@@ -37,14 +38,14 @@ struct compute_gini
 };
 
 
+#define DBL(x) REAL(x)[0]
 
-RcppExport SEXP rthgini(SEXP x_, SEXP mu_, SEXP unbiased_, SEXP nthreads)
+extern "C" SEXP rthgini(SEXP x, SEXP mu, SEXP unbiased_, SEXP nthreads)
 {
-  Rcpp::NumericVector x(x_);
-  Rcpp::NumericVector mu(mu_);
   const int unbiased = INTEGER(unbiased_)[0];
   const int n = LENGTH(x);
-  Rcpp::NumericVector gini(1);
+  SEXP gini;
+  PROTECT(gini = allocVector(REALSXP, 1));
   
   #if RTH_OMP
   omp_set_num_threads(INT(nthreads));
@@ -52,7 +53,7 @@ RcppExport SEXP rthgini(SEXP x_, SEXP mu_, SEXP unbiased_, SEXP nthreads)
   tbb::task_scheduler_init init(INT(nthreads));
   #endif
   
-  thrust::device_vector<double> dx(x.begin(), x.end());
+  thrust::device_vector<double> dx(REAL(x), REAL(x)+n);
   
   thrust::sort(dx.begin(), dx.end());
   
@@ -60,12 +61,12 @@ RcppExport SEXP rthgini(SEXP x_, SEXP mu_, SEXP unbiased_, SEXP nthreads)
   thrust::counting_iterator<int> end = begin + n;
   
   thrust::plus<flouble> binop;
-  gini[0] = (double) thrust::transform_reduce(begin, end, compute_gini(n, dx.begin()), (flouble) 0., binop);
+  DBL(gini) = (double) thrust::transform_reduce(begin, end, compute_gini(n, dx.begin()), (flouble) 0., binop);
   
   if (unbiased)
-    gini[0] = gini[0]/n/(n-1)/mu[0];
+    DBL(gini) = DBL(gini) / (n*(n-1)*DBL(mu));
   else
-    gini[0] = gini[0]/n/n/mu[0];
+    DBL(gini) = DBL(gini) / (n*n*DBL(mu));
   
   return gini;
 }
