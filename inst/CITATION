@@ -1,0 +1,22 @@
+citHeader("To cite Rth:")
+
+citEntry(
+  entry = "Misc",
+  title = "Rth: Parallel R through Thrust",
+  author = personList(as.person("Norm Matloff"), 
+                      as.person("Drew Schmidt")),
+  year = "2014",
+  note = "{R} Package",
+  url = "https://github.com/Rth-org/Rth,
+  textVersion = "Matloff, N. and Schmidt, D. (2014) Rth: Parallel R through 
+    Thrust. R Package, URL https://github.com/Rth-org/Rth",
+  key = "RthRPackage"
+)
+
+citEntry(
+  entry = "Manual",
+  title = "Norm's Forthcoming Book",
+  author = personList(as.person("Norm Matloff")),
+  year = "2015",
+)
+

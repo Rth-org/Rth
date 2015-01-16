@@ -5,26 +5,22 @@ PKG_LIBS = @RTH_LDFLAGS@
 
 PKG_CPPFLAGS = @RTH_CPPFLAGS@   # -Wfatal-errors
 
-
-#$(CC)=@NVCC@
-#$(CFLAGS)="$(CFLAGS) @NVCCFLAGS@"
-
+#	rthcolsums.o \
+#	rthgini.o \
+#	rthhist.o \
+#	rthkendall.o \
+#	rthma.o \
+#	rthrnorm.o \
+#	rthrunif.o \
 
 R_OBJS = \
 	hash.o \
-	rthcolsums.o \
 	rthdist.o \
-	rthgini.o \
-	rthhist.o \
-	rthkendall.o \
-	rthma.o \
 	rthmean.o \
 	rthnorm.o \
 	rthorder.o \
 	rthpdist.o \
 	rthpearson.o \
-	rthrnorm.o \
-	rthrunif.o \
 	rthsort.o \
 	rthtable.o \
 	rthxpos.o \
@@ -33,13 +29,25 @@ R_OBJS = \
 
 OBJECTS = $(R_OBJS)
 
+BACKEND = @BACKEND@
 all: $(SHLIB)
 
-$(SHLIB): $(OBJECTS)
+ifeq "$(BACKEND)" "CUDA"
+NVCC = @NVCC@
 
+R_INC := "/usr/share/R/include" #$(R_HOME)/include 
+R_LIB := $(R_HOME)/lib
 
-#x.o: x.c
-#  $(CC) $(ALL_CPPFLAGS) $(CFLAGS) -c x.c -o $@
+CUDA_INCS := -I"$(CUDA_HOME)/include" -I"$(R_INC)" -I"$(RCPP_CXXFLAGS)" -I"../inst/include/"
+
+%.o: %.cpp
+	$(NVCC) -DGPU -x cu -c -Xcompiler "-fPIC" $(CUDA_INCS) $< -o $@
+Rth.so: $(OBJECTS)
+	$(NVCC) --shared $(OBJECTS) -o $@
+
+else
+  $(SHLIB): $(OBJECTS)
+endif
 
 
 clean:
