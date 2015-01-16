@@ -4,16 +4,8 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/functional.h>
 
-#include <R.h>
-#include <Rinternals.h>
+#include "Rth.h"
 
-#include "backend.h"
-
-#ifdef GPU
-#define flouble float
-#else
-#define flouble double
-#endif
 
 
 /* mean */
@@ -39,11 +31,7 @@ extern "C" SEXP rthmean(SEXP x, SEXP nthreads)
   PROTECT(avg = allocVector(REALSXP, 1));
   const int n = LENGTH(x);
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   thrust::device_vector<flouble> dx(REAL(x), REAL(x)+n);
   

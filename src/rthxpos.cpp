@@ -1,4 +1,3 @@
-
 // matrix transpose, for_each version
 
 // see the alternate version, rthxposnv.cpp that follows the example in
@@ -7,8 +6,7 @@
 
 #include <thrust/device_vector.h>
 
-#include <R.h>
-#include <Rinternals.h>
+#include "Rth.h"
 
 // functor; holds iterators for the input and output matrices, and each
 // invocation of the function copies from one element from the former to

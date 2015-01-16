@@ -1,7 +1,4 @@
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 /* 
   PRIORITY (highest to lowest):
@@ -9,8 +6,6 @@
     OMP_NUM_THREADS (for OpenMP backends)
     # cores
 */
-
-#define RTH_ERROR -2147483648 // int NA in R
 
 extern "C" SEXP Rth_get_backend()
 {

@@ -10,10 +10,7 @@
 #include <thrust/functional.h>
 #include <thrust/sequence.h>
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 // update function, to calculate current moving average value from the
 // previous one
@@ -35,11 +32,7 @@ extern "C" SEXP rthma(SEXP x, SEXP w, SEXP nthreads)
   const int xas = LENGTH(x);
   const int wa = INTEGER(w)[0];
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   // set up device vector and copy xa to it
   thrust::device_vector<double> dx(REAL(x), REAL(x)+xas);

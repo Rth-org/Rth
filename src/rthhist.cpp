@@ -4,16 +4,8 @@
 // combining
 #include <thrust/device_vector.h>
 
-#include <R.h>
-#include <Rinternals.h>
+#include "Rth.h"
 
-#include "backend.h"
-
-#ifdef GPU
-#define flouble float
-#else
-#define flouble double
-#endif
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<int>::iterator intveciter;
@@ -86,12 +78,7 @@ extern "C" SEXP rthhist(SEXP x, SEXP nbins_,  SEXP nch_, SEXP nthreads)
   
   SEXP ret, retnames;
   
-  
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   // determine binwidth etc.
   thrust::pair<floubleveciter, floubleveciter> mm = 

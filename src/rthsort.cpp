@@ -2,10 +2,7 @@
 #include <thrust/sort.h>
 #include <thrust/sort.h>
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 
 extern "C" SEXP rthsort_double(SEXP a, SEXP decreasing, SEXP inplace,
@@ -13,11 +10,7 @@ extern "C" SEXP rthsort_double(SEXP a, SEXP decreasing, SEXP inplace,
 {
   SEXP b;
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   // set up device vector and copy xa to it
   thrust::device_vector<double> dx(REAL(a), REAL(a)+LENGTH(a));

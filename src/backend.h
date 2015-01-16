@@ -4,7 +4,6 @@
 
 #include <thrust/detail/config.h>
 
-#define INT(x) INTEGER(x)[0]
 
 // FIXME should we include CPP ?
 #if THRUST_VERSION >= 100700

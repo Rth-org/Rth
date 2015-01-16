@@ -6,10 +6,7 @@
 #include <thrust/reduce.h>
 #include <thrust/functional.h>
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 // note that R uses column-major order, and Rcpp vectors retain this
 // ordering
@@ -35,11 +32,7 @@ extern "C" SEXP rthcolsums(SEXP m, SEXP nthreads) {
   int nr = nrows(m);
   int nc = ncols(m);
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   double *m_cp = new double[nr*nc];
   memcpy(m_cp, REAL(m), sizeof(double));

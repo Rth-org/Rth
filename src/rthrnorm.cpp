@@ -10,10 +10,7 @@
 
 #include <stdint.h>
 
-#include "backend.h"
-
-#include <R.h>
-#include <Rinternals.h>
+#include "Rth.h"
 
 extern "C" {
 #include "hash.h"
@@ -56,11 +53,7 @@ extern "C" SEXP rth_rnorm(SEXP n_, SEXP mean_, SEXP sd_, SEXP seed_, SEXP nthrea
   const flouble sd = (flouble) REAL(sd_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   thrust::device_vector<flouble> vec(n);
   

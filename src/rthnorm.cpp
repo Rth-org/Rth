@@ -4,16 +4,8 @@
 #include <thrust/device_vector.h>
 
 #include <cmath>
-#include <R.h>
-#include <Rinternals.h>
 
-#include "backend.h"
-
-#ifdef GPU
-#define flouble float
-#else
-#define flouble double
-#endif
+#include "Rth.h"
 
 template <typename T>
 struct ppow
@@ -106,11 +98,7 @@ extern "C" SEXP rth_norm(SEXP x_, SEXP p_, SEXP nthreads)
   SEXP nrm;
   PROTECT(nrm = allocVector(REALSXP, 1));
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   REAL(nrm)[0] = calc_norm(x, len, p);
   

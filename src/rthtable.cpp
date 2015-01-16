@@ -1,9 +1,6 @@
-#include <R.h>
-#include <Rinternals.h>
-
 #include <thrust/device_vector.h>
 
-#include "backend.h"
+#include "Rth.h"
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<int>::iterator intveciter;
@@ -50,6 +47,7 @@ struct do1chunk {  // handle one chunk of the data
 
 // data x has lower, upper bds given in ub_; count computation will be
 // divided into nch_ chunks, performed by nthreads threads
+// for unknown reasons, this code does not work under TBB
 extern "C" SEXP rthtable(SEXP x, SEXP lb_, SEXP ub_, 
   SEXP nch_, SEXP nthreads)
 {
@@ -87,12 +85,8 @@ extern "C" SEXP rthtable(SEXP x, SEXP lb_, SEXP ub_,
   
   // partitioning of work
   const int nch = INTEGER(nch_)[0];
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  // tbb::task_scheduler_init init(INT(nthreads));
-  // for unknown reasons, this code does not work under TBB
-  #endif
+  
+  RTH_GEN_NTHREADS(nthreads);
   
   // form matrix of cell counts, one row per chunk, row-major order
   intvec dcellcounts(nch*ncells);

@@ -1,4 +1,3 @@
-
 // author: N. Matloff
 
 // Rth replacements for R order(), rank()
@@ -7,10 +6,7 @@
 #include <thrust/sequence.h>
 #include <thrust/sort.h>
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<double> doublevec;
@@ -29,12 +25,7 @@ extern "C" SEXP rthorder(SEXP x, SEXP rnk, SEXP nthreads)
   SEXP ret;
   PROTECT(ret = allocVector(INTSXP, n));
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
-  
+  RTH_GEN_NTHREADS(nthreads);
   
   doublevec dx(REAL(x), REAL(x)+n);
   

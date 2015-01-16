@@ -11,16 +11,8 @@
 
 #include <thrust/device_vector.h>
 
-#include <R.h>
-#include <Rinternals.h>
+#include "Rth.h"
 
-#include "backend.h"
-
-#ifdef GPU
-#define flouble float
-#else
-#define flouble double
-#endif
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<flouble> floublevec;
@@ -59,11 +51,7 @@ extern "C" SEXP rthkendall(SEXP x, SEXP y, SEXP nthreads)
   PROTECT(ret = allocVector(REALSXP, 1));
   const int n = LENGTH(x);
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   thrust::counting_iterator<int> seqa(0);
   thrust::counting_iterator<int> seqb =  seqa + n - 1;

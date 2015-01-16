@@ -8,10 +8,7 @@
 #include <thrust/inner_product.h>
 #include <math.h>
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 typedef thrust::device_vector<int> intvec;
 typedef thrust::device_vector<double> doublevec;
@@ -24,11 +21,7 @@ extern "C" SEXP rthpearson(SEXP x, SEXP y, SEXP nthreads)
   doublevec dy(REAL(x), REAL(x)+n);
   double zero = (double) 0.0;
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   double xy =
     thrust::inner_product(dx.begin(), dx.end(), dy.begin(), zero);

@@ -8,8 +8,7 @@
 #include <thrust/iterator/counting_iterator.h>
 #include <thrust/iterator/transform_iterator.h>
 
-#include <R.h>
-#include <Rinternals.h>
+#include "Rth.h"
 
 // see comments at the top of rthxpos.cpp
 

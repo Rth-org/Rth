@@ -1,9 +1,7 @@
 #include <math.h>
 #include <thrust/device_vector.h>
-#include <R.h>
-#include <Rinternals.h>
 
-#include "backend.h"
+#include "Rth.h"
 
 // Rth substitute for R's dist() function
 
@@ -57,11 +55,7 @@ extern "C" SEXP rthdist(SEXP inmat, SEXP nthreads)
   int nr = nrows(inmat);
   int nc = ncols(inmat);
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  tbb::task_scheduler_init init(INT(nthreads));
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   thrust::device_vector<double> dmat(REAL(inmat), REAL(inmat) + nr*nc);
   

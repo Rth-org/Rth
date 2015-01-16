@@ -2,10 +2,7 @@
 #include <math.h>
 #include <thrust/device_vector.h>
 
-#include <R.h>
-#include <Rinternals.h>
-
-#include "backend.h"
+#include "Rth.h"
 
 // Rth substitute for R's pdist package
 
@@ -52,6 +49,9 @@ struct do1ival
   }
 };
 
+
+
+// for unknown reasons, this code does not work under TBB
 // compute distances from rows of inmat1 to rows of inmat2
 extern "C" SEXP rthpdist(SEXP inmat1, SEXP inmat2, SEXP nthreads)
 {
@@ -60,12 +60,7 @@ extern "C" SEXP rthpdist(SEXP inmat1, SEXP inmat2, SEXP nthreads)
   int nc = ncols(inmat1);
   int nr2 = nrows(inmat2);
   
-  #if RTH_OMP
-  omp_set_num_threads(INT(nthreads));
-  #elif RTH_TBB
-  // tbb::task_scheduler_init init(INT(nthreads));
-  // for unknown reasons, this code does not work under TBB
-  #endif
+  RTH_GEN_NTHREADS(nthreads);
   
   thrust::device_vector<double> dmat1(REAL(inmat1), REAL(inmat1)+nr1*nc);
   thrust::device_vector<double> dmat2(REAL(inmat2), REAL(inmat2)+nr2*nc);
