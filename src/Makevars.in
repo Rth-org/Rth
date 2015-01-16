@@ -1,10 +1,7 @@
 #################################################################
 
-RCPP_CXXFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::CxxFlags()"`
-RCPP_LDFLAGS = `$(R_HOME)/bin/Rscript -e "Rcpp:::LdFlags()"`
-
-PKG_CXXFLAGS = $(RCPP_CXXFLAGS) -I../inst/include/ 
-PKG_LIBS = $(RCPP_LDFLAGS) @RTH_LDFLAGS@
+PKG_CXXFLAGS = -I../inst/include/ 
+PKG_LIBS = @RTH_LDFLAGS@
 
 PKG_CPPFLAGS = @RTH_CPPFLAGS@   # -Wfatal-errors
 
@@ -20,6 +17,7 @@ R_OBJS = \
 	rthgini.o \
 	rthhist.o \
 	rthkendall.o \
+	rthma.o \
 	rthmean.o \
 	rthnorm.o \
 	rthorder.o \
@@ -29,7 +27,6 @@ R_OBJS = \
 	rthrunif.o \
 	rthsort.o \
 	rthtable.o \
-	rthma.o \
 	rthxpos.o \
 	threads.o
 

@@ -12,9 +12,7 @@
 
 #define RTH_ERROR -2147483648 // int NA in R
 
-extern "C" {
-
-SEXP Rth_get_backend()
+extern "C" SEXP Rth_get_backend()
 {
   SEXP backend;
   PROTECT(backend = allocVector(STRSXP, 1));
@@ -35,7 +33,7 @@ SEXP Rth_get_backend()
 
 
 
-SEXP Rth_get_num_threads()
+extern "C" SEXP Rth_get_num_threads()
 {
   char *rth_nthreads = getenv("RTH_NUM_THREADS");
   char *omp_nthreads = getenv("OMP_NUM_THREADS");
@@ -62,7 +60,5 @@ SEXP Rth_get_num_threads()
   
   UNPROTECT(1);
   return nthreads;
-}
-
 }
 
