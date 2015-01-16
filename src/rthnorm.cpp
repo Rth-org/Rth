@@ -3,7 +3,9 @@
 #include <thrust/transform_reduce.h>
 #include <thrust/device_vector.h>
 
-#include <Rcpp.h>
+#include <cmath>
+#include <R.h>
+#include <Rinternals.h>
 
 #include "backend.h"
 
@@ -48,7 +50,7 @@ struct ppow2
 
 
 // Norm of vector
-double calc_norm(double *x, const unsigned int len, const double p)
+double calc_norm(double *x, const int len, const double p)
 {
   thrust::plus<double> binary_op;
   double norm;
@@ -74,7 +76,7 @@ double calc_norm(double *x, const unsigned int len, const double p)
 
 
 // Euclidean distance of two vectors
-double calc_dist(double *x, const double *y, const unsigned int len, const double p)
+double calc_dist(double *x, const double *y, const int len, const double p)
 {
   int i;
   double *diff;
@@ -95,13 +97,14 @@ double calc_dist(double *x, const double *y, const unsigned int len, const doubl
 
 
 // Wrappers
-RcppExport SEXP rth_norm(SEXP x_, SEXP p_, SEXP nthreads)
+extern "C" SEXP rth_norm(SEXP x_, SEXP p_, SEXP nthreads)
 {
   double *x = REAL(x_);
   int len = LENGTH(x_);
   double p = REAL(p_)[0];
   
-  Rcpp::NumericVector nrm(1);
+  SEXP nrm;
+  PROTECT(nrm = allocVector(REALSXP, 1));
   
   #if RTH_OMP
   omp_set_num_threads(INT(nthreads));
@@ -109,25 +112,27 @@ RcppExport SEXP rth_norm(SEXP x_, SEXP p_, SEXP nthreads)
   tbb::task_scheduler_init init(INT(nthreads));
   #endif
   
-  nrm[0] = calc_norm(x, len, p);
+  REAL(nrm)[0] = calc_norm(x, len, p);
   
+  UNPROTECT(1);
   return nrm;
 }
 
 
 
-RcppExport SEXP rth_dist(SEXP x_, SEXP y_, SEXP p_)
+extern "C" SEXP rth_dist(SEXP x_, SEXP y_, SEXP p_)
 {
   double *x = REAL(x_);
   double *y = REAL(y_);
   const double p = REAL(p_)[0];
   const int len = LENGTH(x_);
   
-  Rcpp::NumericVector dist(1);
+  SEXP dist;
+  PROTECT(dist = allocVector(REALSXP, 1));
   
+  REAL(dist)[0] = calc_dist(x, y, len, p);
   
-  dist[0] = calc_dist(x, y, len, p);
-  
+  UNPROTECT(1);
   return dist;
 }
 
