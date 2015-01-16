@@ -12,7 +12,8 @@
 
 #include "backend.h"
 
-#include <Rcpp.h>
+#include <R.h>
+#include <Rinternals.h>
 
 extern "C" {
 #include "hash.h"
@@ -47,10 +48,10 @@ struct parallel_random_normal : public thrust::unary_function<thrust::tuple<cons
 
 
 
-RcppExport SEXP rth_rnorm(SEXP n_, SEXP mean_, SEXP sd_, SEXP seed_, SEXP nthreads)
+extern "C" SEXP rth_rnorm(SEXP n_, SEXP mean_, SEXP sd_, SEXP seed_, SEXP nthreads)
 {
-  int i;
-  const uint64_t n = (uint64_t) REAL(n_)[0];
+  SEXP x;
+  const uint64_t n = (uint64_t) INTEGER(n_)[0];
   const flouble mean = (flouble) REAL(mean_)[0];
   const flouble sd = (flouble) REAL(sd_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
@@ -70,10 +71,12 @@ RcppExport SEXP rth_rnorm(SEXP n_, SEXP mean_, SEXP sd_, SEXP seed_, SEXP nthrea
     vec.begin(),
     parallel_random_normal(t));
   
-  thrust::host_vector<flouble> x(n);
-  thrust::copy(vec.begin(), vec.end(), x.begin());
+//  thrust::host_vector<flouble> x(n);
+  PROTECT(x = allocVector(REALSXP, n));
+  thrust::copy(vec.begin(), vec.end(), REAL(x));
   
-  return Rcpp::wrap(x);
+  UNPROTECT(1);
+  return x;
 }
 
 
