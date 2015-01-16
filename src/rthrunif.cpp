@@ -12,7 +12,8 @@
 
 #include "backend.h"
 
-#include <Rcpp.h>
+#include <R.h>
+#include <Rinternals.h>
 
 extern "C" {
 #include "hash.h"
@@ -46,10 +47,10 @@ struct parallel_random_uniform : public thrust::unary_function<thrust::tuple<con
 
 
 
-RcppExport SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_, SEXP nthreads)
+extern "C" SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_, SEXP nthreads)
 {
-  int i;
-  const uint64_t n = (uint64_t) REAL(n_)[0];
+  SEXP x;
+  const uint64_t n = (uint64_t) INTEGER(n_)[0];
   const flouble min = (flouble) REAL(min_)[0];
   const flouble max = (flouble) REAL(max_)[0];
   const unsigned int seed = INTEGER(seed_)[0];
@@ -69,10 +70,11 @@ RcppExport SEXP rth_runif(SEXP n_, SEXP min_, SEXP max_, SEXP seed_, SEXP nthrea
     vec.begin(),
     parallel_random_uniform(t));
   
-  thrust::host_vector<flouble> x(n);
-  thrust::copy(vec.begin(), vec.end(), x.begin());
+//  thrust::host_vector<flouble> x(n);
+  PROTECT(x = allocVector(REALSXP, n));
+  thrust::copy(vec.begin(), vec.end(), REAL(x));
   
-  return Rcpp::wrap(x);
+  return x;
 }
 
 
