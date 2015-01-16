@@ -4,7 +4,7 @@ Title: Rth
 Version: 0.1-0
 Description: rth
 License: GPL (>= 2)
-Depends: R (>= 2.14.0), Rcpp
+Depends: R (>= 2.14.0)
 NeedsCompilation: yes
 ByteCompile: yes
 Author: Norm Matloff [aut, cre], Drew Schmidt [ctb]
