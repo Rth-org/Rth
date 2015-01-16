@@ -7,7 +7,8 @@
 
 #include <thrust/device_vector.h>
 
-#include<Rcpp.h>
+#include <R.h>
+#include <Rinternals.h>
 
 // functor; holds iterators for the input and output matrices, and each
 // invocation of the function copies from one element from the former to
@@ -37,24 +38,31 @@ struct copyelt2xp
    }
 };
 
-RcppExport SEXP rthxpos(SEXP m) 
+extern "C" SEXP rthxpos(SEXP m) 
 {
-   Rcpp::NumericMatrix tmpm = Rcpp::NumericMatrix(m);
-   int nr = tmpm.nrow();
-   int nc = tmpm.ncol();
-   thrust::device_vector<double> dmat(tmpm.begin(),tmpm.end());
-   // make space for the transpose
-   thrust::device_vector<double> dxp(nr*nc);
-   // iterator to march through the matrix elements
-   thrust::counting_iterator<int> seqb(0);
-   thrust::counting_iterator<int> seqe = seqb + nr*nc;
-   // for each i in seq, copy the matrix elt to its spot in the
-   // transpose
-   thrust::for_each(seqb,seqe,
-      copyelt2xp(dmat.begin(),dxp.begin(),nr,nc));
-   // prepare the R output, and return it
-   Rcpp::NumericVector routmat(nc*nr);
-   thrust::copy(dxp.begin(),dxp.end(),routmat.begin());
-   return routmat;
+  SEXP routmat;
+  int nr = nrows(m);
+  int nc = ncols(m);
+  
+  thrust::device_vector<double> dmat(REAL(m), REAL(m)+nr*nc);
+  
+  // make space for the transpose
+  thrust::device_vector<double> dxp(nr*nc);
+  
+  // iterator to march through the matrix elements
+  thrust::counting_iterator<int> seqb(0);
+  thrust::counting_iterator<int> seqe = seqb + nr*nc;
+  
+  // for each i in seq, copy the matrix elt to its spot in the
+  // transpose
+  thrust::for_each(seqb,seqe,
+    copyelt2xp(dmat.begin(),dxp.begin(),nr,nc));
+  
+  // prepare the R output, and return it
+  PROTECT(routmat = allocVector(REALSXP, nc*nr));
+  thrust::copy(dxp.begin(), dxp.end(), REAL(routmat));
+  
+  UNPROTECT(1);
+  return routmat;
 }
 
