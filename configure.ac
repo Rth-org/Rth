@@ -24,20 +24,16 @@
 ################################################################################
 
 
-AC_INIT(DESCRIPTION)
+AC_INIT(rth)
 
-
-### Setup custom CUDA paths
-CUDA_INSTALL_PATH="/usr/local/cuda"
-CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
-
-AC_ARG_WITH([cuda],
+### CUDA paths
+AC_ARG_WITH([cuda-home],
   AS_HELP_STRING(
     [--with-cuda-home@<:@=DIR@:>@],
-    [Set CUDA install dir @<:@]m4_default(/usr/)[@:>@]
+    [Set CUDA install dir @<:@]m4_default(/usr/local/cuda/)[@:>@]
   ),
   [cuda_home=$withval], 
-  [cuda_home=/usr/]
+  [cuda_home=/usr/local/cuda/]
 )
 
 
@@ -103,15 +99,15 @@ elif test "X${BACKEND}" = "XTBB"; then
   RTH_LDFLAGS="-L${tbb_libdir}/tbb -ltbb"
 elif test "X${BACKEND}" = "XCUDA"; then
   AC_MSG_RESULT([Using CUDA backend])
-  AC_PROG_CXX([nvcc])
+  AC_PROG_CXX([${cuda_home}/bin/nvcc])
   AC_LANG([C++])
   
   NVCC="${cuda_home}/bin/nvcc -gencode arch=compute_13,code=sm_13"
   
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_CUDA"
-  RTH_LDFLAGS="-lcuda"
+  RTH_LDFLAGS="-L${cuda_home}/lib/ -lcuda -lcudart"
   
-  CUDA_INCS="-I\"${CUDA_HOME}/include\" -I\"${R_INCLUDE_DIR}\" -I\"../inst/include/\""
+  CUDA_INCS="-I\"${cuda_home}/include\" -I\"${R_INCLUDE_DIR}\" -I\"../inst/include/\""
 else
   AC_MSG_ERROR([Unknown backend; use one of OPENMP, TBB, or CUDA.])
 fi

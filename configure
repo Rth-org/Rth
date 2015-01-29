@@ -582,7 +582,7 @@ PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 PACKAGE_URL=
 
-ac_unique_file="DESCRIPTION"
+ac_unique_file="rth"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -623,8 +623,6 @@ ac_subst_vars='LTLIBOBJS
 LIBOBJS
 CUDA_INCS
 NVCC
-RCPP_LDFLAGS
-RCPP_CXXFLAGS
 RTH_LDFLAGS
 RTH_CPPFLAGS
 BACKEND
@@ -680,7 +678,7 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-with_cuda
+with_cuda_home
 with_tbb_incdir
 with_tbb_libdir
 with_backend
@@ -1308,7 +1306,7 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-cuda-home[=DIR]  Set CUDA install dir [/usr/]
+  --with-cuda-home[=DIR]  Set CUDA install dir [/usr/local/cuda/]
   --with-tbb-incdir[=DIR] Set TBB include directory [/usr/include]
   --with-tbb-libdir[=DIR] Set TBB library directory [/usr/lib/tbb]
   --with-backend          Determines the parallel backend for thrust. Options
@@ -2037,17 +2035,13 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+### CUDA paths
 
-### Setup custom CUDA paths
-CUDA_INSTALL_PATH="/usr/local/cuda"
-CUDA_SDK_INSTALL_PATH="/usr/local/NVIDIA_GPU_Computing_SDK"
-
-
-# Check whether --with-cuda was given.
-if test "${with_cuda+set}" = set; then :
-  withval=$with_cuda; cuda_home=$withval
+# Check whether --with-cuda-home was given.
+if test "${with_cuda_home+set}" = set; then :
+  withval=$with_cuda_home; cuda_home=$withval
 else
-  cuda_home=/usr/
+  cuda_home=/usr/local/cuda/
 
 fi
 
@@ -2088,11 +2082,6 @@ else
 
 fi
 
-
-
-
-R_SCMD="${R_HOME}/bin/Rscript -e"
-RCPP_LDFLAGS=`${R_SCMD} "Rcpp:::LdFlags()"`
 
 
 
@@ -2687,8 +2676,6 @@ $as_echo "$as_me: WARNING: OpenMP is not supported by your compiler; very strang
 
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \$(SHLIB_OPENMP_CXXFLAGS)"
   RTH_LDFLAGS=""
-
-  RCPP_CXXFLAGS=`${R_SCMD} "Rcpp:::CxxFlags()"`
 elif test "X${BACKEND}" = "XTBB"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using Thread Building Blocks backend" >&5
 $as_echo "Using Thread Building Blocks backend" >&6; }
@@ -3418,8 +3405,6 @@ fi
 
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -I${tbb_incdir}"
   RTH_LDFLAGS="-L${tbb_libdir}/tbb -ltbb"
-
-  RCPP_CXXFLAGS=`${R_SCMD} "Rcpp:::CxxFlags()"`
 elif test "X${BACKEND}" = "XCUDA"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: Using CUDA backend" >&5
 $as_echo "Using CUDA backend" >&6; }
@@ -3433,7 +3418,7 @@ if test -z "$CXX"; then
     CXX=$CCC
   else
     if test -n "$ac_tool_prefix"; then
-  for ac_prog in nvcc
+  for ac_prog in ${cuda_home}/bin/nvcc
   do
     # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
@@ -3477,7 +3462,7 @@ fi
 fi
 if test -z "$CXX"; then
   ac_ct_CXX=$CXX
-  for ac_prog in nvcc
+  for ac_prog in ${cuda_home}/bin/nvcc
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -3690,17 +3675,12 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   NVCC="${cuda_home}/bin/nvcc -gencode arch=compute_13,code=sm_13"
 
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_CUDA"
-  RTH_LDFLAGS="-lcuda"
+  RTH_LDFLAGS="-L${cuda_home}/lib/ -lcuda -lcudart"
 
-  CUDA_INCS="-I\"${CUDA_HOME}/include\" -I\"${R_INCLUDE_DIR}\" -I\"../inst/include/\""
-
-  ### I hate nvcc
-  RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`
+  CUDA_INCS="-I\"${cuda_home}/include\" -I\"${R_INCLUDE_DIR}\" -I\"../inst/include/\""
 else
   as_fn_error $? "Unknown backend; use one of OPENMP, TBB, or CUDA." "$LINENO" 5
 fi
-
-
 
 
 
