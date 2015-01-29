@@ -7,7 +7,8 @@ Description: Thrust is a powerful tool for parallel programming. Rth consists
   without needing to know Thrust or C++.
 License: GPL (>= 2)
 Depends: R (>= 2.14.0)
-SystemRequirements: Nvidia's CUDA toolkit (>= release 5.0)
+SystemRequirements: GNU make.  If building with CUDA backend, then
+  Nvidia's CUDA toolkit (>= release 5.0) is required.
 NeedsCompilation: yes
 ByteCompile: yes
 Authors@R: c(person("Norm", "Matloff", role = c("aut", "cre"), 
