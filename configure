@@ -621,6 +621,7 @@ ac_includes_default="\
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+CUDA_INCS
 NVCC
 RCPP_LDFLAGS
 RCPP_CXXFLAGS
@@ -2679,6 +2680,10 @@ $as_echo "$ac_cv_prog_cxx_openmp" >&6; }
   fi
 
 
+  if test "X$ac_cv_prog_cxx_openmp" = Xunsupported; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: OpenMP is not supported by your compiler; very strange things may happen during compile time!" >&5
+$as_echo "$as_me: WARNING: OpenMP is not supported by your compiler; very strange things may happen during compile time!" >&2;}
+  fi
 
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \$(SHLIB_OPENMP_CXXFLAGS)"
   RTH_LDFLAGS=""
@@ -3687,11 +3692,14 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_CUDA"
   RTH_LDFLAGS="-lcuda"
 
+  CUDA_INCS="-I\"$(CUDA_HOME)/include\" -I\"$(R_INCLUDE_DIR)\" -I\"../inst/include/\""
+
   ### I hate nvcc
   RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`
 else
   as_fn_error $? "Unknown backend; use one of OPENMP, TBB, or CUDA." "$LINENO" 5
 fi
+
 
 
 

@@ -86,6 +86,9 @@ if test "X${BACKEND}" = "XOPENMP"; then
   AC_LANG([C++])
   
   AC_OPENMP
+  if test "X$ac_cv_prog_cxx_openmp" = Xunsupported; then
+    AC_MSG_WARN([OpenMP is not supported by your compiler; very strange things may happen during compile time!])
+  fi
   
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \$(SHLIB_OPENMP_CXXFLAGS)"
   RTH_LDFLAGS=""
@@ -117,6 +120,8 @@ elif test "X${BACKEND}" = "XCUDA"; then
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_CUDA"
   RTH_LDFLAGS="-lcuda"
   
+  CUDA_INCS="-I\"$(CUDA_HOME)/include\" -I\"$(R_INCLUDE_DIR)\" -I\"../inst/include/\""
+  
   ### I hate nvcc
   RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`
 else
@@ -131,6 +136,7 @@ AC_SUBST(RTH_LDFLAGS)
 AC_SUBST(RCPP_CXXFLAGS)
 AC_SUBST(RCPP_LDFLAGS)
 AC_SUBST(NVCC)
+AC_SUBST(CUDA_INCS)
 AC_OUTPUT(src/Makevars)
 
 
