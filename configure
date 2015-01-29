@@ -3687,12 +3687,12 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-  NVCC="${cuda_home}/bin/nvcc -gencode arch=compute_10,code=sm_10 -gencode arch=compute_13,code=sm_13 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30"
+  NVCC="${cuda_home}/bin/nvcc -gencode arch=compute_13,code=sm_13"
 
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_CUDA"
   RTH_LDFLAGS="-lcuda"
 
-  CUDA_INCS="-I\"$(CUDA_HOME)/include\" -I\"$(R_INCLUDE_DIR)\" -I\"../inst/include/\""
+  CUDA_INCS="-I\"${CUDA_HOME}/include\" -I\"${R_INCLUDE_DIR}\" -I\"../inst/include/\""
 
   ### I hate nvcc
   RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`

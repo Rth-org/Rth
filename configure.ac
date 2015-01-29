@@ -75,11 +75,6 @@ AC_ARG_WITH(backend,
 
 
 
-R_SCMD="${R_HOME}/bin/Rscript -e"
-RCPP_LDFLAGS=`${R_SCMD} "Rcpp:::LdFlags()"`
-
-
-
 if test "X${BACKEND}" = "XOPENMP"; then
   AC_MSG_RESULT([Using OpenMP backend])
   AC_PROG_CXX
@@ -92,8 +87,6 @@ if test "X${BACKEND}" = "XOPENMP"; then
   
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_OMP \$(SHLIB_OPENMP_CXXFLAGS)"
   RTH_LDFLAGS=""
-  
-  RCPP_CXXFLAGS=`${R_SCMD} "Rcpp:::CxxFlags()"`
 elif test "X${BACKEND}" = "XTBB"; then
   AC_MSG_RESULT([Using Thread Building Blocks backend])
   AC_PROG_CXX
@@ -108,22 +101,17 @@ elif test "X${BACKEND}" = "XTBB"; then
   
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_TBB -I${tbb_incdir}"
   RTH_LDFLAGS="-L${tbb_libdir}/tbb -ltbb"
-  
-  RCPP_CXXFLAGS=`${R_SCMD} "Rcpp:::CxxFlags()"`
 elif test "X${BACKEND}" = "XCUDA"; then
   AC_MSG_RESULT([Using CUDA backend])
   AC_PROG_CXX([nvcc])
   AC_LANG([C++])
   
-  NVCC="${cuda_home}/bin/nvcc -gencode arch=compute_10,code=sm_10 -gencode arch=compute_13,code=sm_13 -gencode arch=compute_20,code=sm_20 -gencode arch=compute_30,code=sm_30"
+  NVCC="${cuda_home}/bin/nvcc -gencode arch=compute_13,code=sm_13"
   
   RTH_CPPFLAGS="-DTHRUST_DEVICE_SYSTEM=THRUST_DEVICE_BACKEND_CUDA"
   RTH_LDFLAGS="-lcuda"
   
-  CUDA_INCS="-I\"$(CUDA_HOME)/include\" -I\"$(R_INCLUDE_DIR)\" -I\"../inst/include/\""
-  
-  ### I hate nvcc
-  RCPP_CXXFLAGS=`${R_SCMD} "cat(sub(x=capture.output(Rcpp:::CxxFlags()), pattern='-I', replacement=''))"`
+  CUDA_INCS="-I\"${CUDA_HOME}/include\" -I\"${R_INCLUDE_DIR}\" -I\"../inst/include/\""
 else
   AC_MSG_ERROR([Unknown backend; use one of OPENMP, TBB, or CUDA.])
 fi
@@ -133,8 +121,6 @@ dnl Start to substitute templates
 AC_SUBST(BACKEND)
 AC_SUBST(RTH_CPPFLAGS)
 AC_SUBST(RTH_LDFLAGS)
-AC_SUBST(RCPP_CXXFLAGS)
-AC_SUBST(RCPP_LDFLAGS)
 AC_SUBST(NVCC)
 AC_SUBST(CUDA_INCS)
 AC_OUTPUT(src/Makevars)
