@@ -1,5 +1,3 @@
 useDynLib(Rth)
 
-import(Rcpp)
-
 exportPattern("^rth[[:alpha:]]+")

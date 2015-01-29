@@ -582,7 +582,7 @@ PACKAGE_STRING=
 PACKAGE_BUGREPORT=
 PACKAGE_URL=
 
-ac_unique_file="rth"
+ac_unique_file="DESCRIPTION"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>

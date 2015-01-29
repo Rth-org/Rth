@@ -24,7 +24,7 @@
 ################################################################################
 
 
-AC_INIT(rth)
+AC_INIT(DESCRIPTION)
 
 ### CUDA paths
 AC_ARG_WITH([cuda-home],
