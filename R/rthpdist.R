@@ -1,3 +1,4 @@
+#' @export
 rthpdist <- function(m1,m2, nthreads=rth.nthreads()) {
    if(rth.get.backend() == "tbb")
       stop("this function does not yet work under a TBB backend")

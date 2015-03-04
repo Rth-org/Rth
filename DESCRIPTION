@@ -3,16 +3,17 @@ Type: Package
 Title: Rth: Parallel R through Thrust
 Version: 0.1-0
 Description: Thrust is a powerful tool for parallel programming. Rth consists
-  of R library functions that enable one to achieve parallelism through Thrust,
-  without needing to know Thrust or C++.
+    of R library functions that enable one to achieve parallelism through
+    Thrust, without needing to know Thrust or C++.
 License: GPL (>= 2)
-Depends: R (>= 2.14.0)
+Depends:
+    R (>= 2.14.0)
 SystemRequirements: GNU make.  If building with CUDA backend, then
-  Nvidia's CUDA toolkit (>= release 5.0) is required.
+    Nvidia's CUDA toolkit (>= release 5.0) is required.
 NeedsCompilation: yes
 ByteCompile: yes
-Authors@R: c(person("Norm", "Matloff", role = c("aut", "cre"), 
-    email = "nsmatloff@ucdavis.edu"), 
-  person("Drew", "Schmidt", role = "aut",
+Authors@R: c(person("Norm", "Matloff", role = c("aut", "cre"),
+    email = "nsmatloff@ucdavis.edu"),
+    person("Drew", "Schmidt", role = "aut",
     email = "wrathematics@gmail.com"))
 Maintainer: Drew Schmidt <wrathematics@gmail.com>

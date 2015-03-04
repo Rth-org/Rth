@@ -1,4 +1,6 @@
 ### slow, don't use
+
+#' @export
 rthmean <- function(x, nthreads=rth.nthreads())
 {
   if (!is.double(x))

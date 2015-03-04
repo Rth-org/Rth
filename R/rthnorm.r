@@ -1,3 +1,4 @@
+#' @export
 rthnorm <- function(x, p=2, nthreads=rth.nthreads())
 {
   if (!is.double(x))

@@ -1,5 +1,4 @@
-# author: N. Matloff
-
+#' @export
 rthpearson <- function(x,y, nthreads=rth.nthreads()) {
    if (!is.double(x))
       storage.mode(x) <- "double"

@@ -1,5 +1,4 @@
-# author: N. Matloff
-
+#' @export
 rthkendall <- function(x,y, nthreads=rth.nthreads())
 {
   if (!is.double(x))
